@@ -1,11 +1,13 @@
-import { lazy, Suspense, useCallback, useState } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { AddSheet } from '../features/add/AddSheet';
 import { AnalysisPage } from '../features/analysis/AnalysisPage';
 import { BudgetPage } from '../features/budget/BudgetPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { TodayPage } from '../features/today/TodayPage';
 import { TransactionsPage } from '../features/transactions/TransactionsPage';
-import { EmptyState, Page, ToastLayer, primeKeyboard } from '../ui/components';
+import { EmptyState, Page, ToastLayer } from '../ui/components';
+import { BackupPage } from '../features/settings/BackupPage';
+import { openEditor, openNewTransaction } from './editor';
 import styles from './App.module.css';
 import { consumeLaunchFlag, parseRoute, useHash, type Route } from './router';
 import { TabBar } from './TabBar';
@@ -18,15 +20,10 @@ const launchedToAdd = typeof window !== 'undefined' && consumeLaunchFlag('add');
 
 export function App() {
   const route = parseRoute(useHash());
-  const [adding, setAdding] = useState(launchedToAdd);
 
-  const openAdd = useCallback(() => {
-    primeKeyboard('decimal');
-    setAdding(true);
-  }, []);
-  const closeAdd = useCallback(() => {
-    (document.activeElement as HTMLElement | null)?.blur();
-    setAdding(false);
+  useEffect(() => {
+    // No tap yet, so iOS won't show the keyboard: the sheet opens, one tap on the amount does the rest.
+    if (launchedToAdd) openEditor(null);
   }, []);
 
   return (
@@ -34,9 +31,9 @@ export function App() {
       <main className={styles.screen} key={route.name}>
         <Screen route={route} />
       </main>
-      <TabBar route={route.name} onAdd={openAdd} />
+      <TabBar route={route.name} onAdd={openNewTransaction} />
       <UpdatePrompt />
-      <AddSheet open={adding} onClose={closeAdd} />
+      <AddSheet />
       <ToastLayer />
     </div>
   );
@@ -54,6 +51,8 @@ function Screen({ route }: { route: Route }) {
       return <BudgetPage />;
     case 'settings':
       return <SettingsPage />;
+    case 'backup':
+      return <BackupPage />;
     case 'design':
       return (
         <Suspense fallback={null}>

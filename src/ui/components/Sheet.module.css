@@ -42,7 +42,7 @@
 .grabber {
   flex: none;
   touch-action: none;
-  padding-top: 6px;
+  padding: 6px 0 8px;
 }
 .handle {
   width: 36px;

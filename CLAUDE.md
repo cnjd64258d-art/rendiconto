@@ -58,6 +58,17 @@ tests/fixtures synthetic CSVs only
   respect `prefers-reduced-motion`, no `navigator.vibrate` (use micro-animations instead).
 - To open the keyboard from a tap, call `primeKeyboard()` synchronously in the handler
   (iOS only focuses inside a user gesture), then autofocus the real input.
+  `openNewTransaction()` (src/app/editor.ts) does this for the quick-add sheet.
+- Web Share also needs the tap: backup files are prepared ahead of time (BackupPage) and
+  `shareOrDownload()` is called directly in the handler.
+
+## Implementation notes (M2)
+- Seed lists live in `src/core/seed.ts`; Dexie seeds them on first open (`populate`) and after "Cancella tutto".
+- Demo rows have ids `demo_00001…` and tag `demo`, so they can be removed without touching real data.
+- `meta.lastBackupAt` drives the 7-day reminder; it is also set after a restore (to the backup's date).
+- Quick add: suggestions come from `core/suggest.ts` (history-based, deterministic). Category auto-fills from
+  keywords until the user taps a chip; the payment method follows the category's usual one until tapped.
+- Deleting shows a toast with "Annulla" that puts the row back.
 
 ## Data model (agreed plan, Dexie v1 from M2)
 transactions, categoryGroups, categories, paymentMethods, people, recurringRules,

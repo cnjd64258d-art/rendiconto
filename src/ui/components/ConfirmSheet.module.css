@@ -1,0 +1,32 @@
+.body {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--gutter) var(--space-2);
+  text-align: center;
+}
+.emoji {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+.title {
+  font-size: var(--text-title3);
+  font-weight: var(--weight-semibold);
+}
+.message {
+  color: var(--color-text-secondary);
+  font-size: var(--text-subhead);
+}
+.actions {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--gutter) 0;
+}
+.second {
+  animation: pulse var(--duration-slow) var(--ease-spring);
+}
+@keyframes pulse {
+  from {
+    transform: scale(0.96);
+    opacity: 0.4;
+  }
+}

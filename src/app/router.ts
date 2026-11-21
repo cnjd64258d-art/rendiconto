@@ -10,6 +10,7 @@ export type Route =
   | { name: 'analysis' }
   | { name: 'budget' }
   | { name: 'settings' }
+  | { name: 'backup' }
   | { name: 'design' }
   | { name: 'notFound'; path: string };
 
@@ -26,6 +27,8 @@ export function parseRoute(hash: string): Route {
       return { name: 'budget' };
     case '/impostazioni':
       return { name: 'settings' };
+    case '/impostazioni/backup':
+      return { name: 'backup' };
     case '/design':
       return { name: 'design' };
     default:

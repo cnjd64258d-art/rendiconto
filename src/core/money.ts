@@ -109,3 +109,10 @@ export function sanitizeAmountTyping(raw: string): string {
   }
   return s.replace(/^0+(?=\d)/, '');
 }
+
+/** 12340 → "123,40" for editing (no grouping, integer arithmetic only). */
+export function centsToInput(cents: Cents): string {
+  const abs = Math.abs(cents);
+  const text = `${Math.trunc(abs / 100)},${String(abs % 100).padStart(2, '0')}`;
+  return cents < 0 ? `-${text}` : text;
+}

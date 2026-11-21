@@ -1,7 +1,8 @@
 export { AmountInput } from './AmountInput';
 export { AnimatedAmount } from './AnimatedNumber';
 export { Button } from './Button';
-export { Banner, EmptyState, ToastLayer, showToast } from './Feedback';
+export { ConfirmSheet } from './ConfirmSheet';
+export { Banner, EmptyState, ToastLayer, hideToast, showToast } from './Feedback';
 export { ListGroup, Property, Row } from './ListGroup';
 export { BackLink, IconButton, Page } from './Page';
 export { ProgressBar, ProgressRing, progressTone } from './Progress';

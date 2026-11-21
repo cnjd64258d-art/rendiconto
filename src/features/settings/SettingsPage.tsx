@@ -1,13 +1,23 @@
-import { formatBytes, formatFullDate } from '../../core/format';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { useState } from 'react';
 import { isStandalone, useStorageStatus } from '../../app/storage';
-import { BackLink, ListGroup, Page, Row } from '../../ui/components';
+import { today } from '../../core/dates';
+import { formatBytes, formatFullDate } from '../../core/format';
+import { db } from '../../db/db';
+import { clearAllData, loadDemoData, removeDemoData } from '../../db/repo';
+import { BackLink, ConfirmSheet, ListGroup, Page, Row, showToast } from '../../ui/components';
 
 const SOON = 'In arrivo';
 
 export function SettingsPage() {
   const storage = useStorageStatus();
-  const persisted =
-    storage.persisted === null ? 'Sconosciuto' : storage.persisted ? 'Protetto' : 'Non protetto';
+  const counts = useLiveQuery(async () => ({
+    all: await db.transactions.count(),
+    demo: await db.transactions.where('id').startsWith('demo_').count(),
+  }));
+  const [confirm, setConfirm] = useState<'demo' | 'clear' | null>(null);
+
+  const persisted = storage.persisted === null ? 'Sconosciuto' : storage.persisted ? 'Protetto' : 'Non protetto';
   const usage =
     storage.usage === null
       ? '—'
@@ -27,13 +37,31 @@ export function SettingsPage() {
 
       <ListGroup
         header="Archivio"
-        footer="I dati restano solo su questo iPhone. «Protetto» significa che Safari non li cancellerà per liberare spazio."
+        footer="I dati restano solo su questo iPhone. «Protetto» significa che iOS non li cancellerà per liberare spazio."
       >
+        <Row icon="💾" label="Backup ed export" href="#/impostazioni/backup" chevron />
         <Row icon="📥" label="Importa CSV" value={SOON} disabled />
-        <Row icon="💾" label="Backup ed export" value={SOON} disabled />
+        <Row icon="🧮" label="Transazioni salvate" value={counts ? counts.all.toLocaleString('it-IT') : '—'} />
         <Row icon="🛡️" label="Archivio" value={persisted} />
         <Row icon="📦" label="Spazio usato" value={usage} />
         <Row icon="📱" label="Modalità" value={isStandalone() ? 'App installata' : 'Safari'} />
+      </ListGroup>
+
+      <ListGroup header="Prova l'app" footer="I dati di esempio sono segnati con il tag «demo» e si possono rimuovere senza toccare i tuoi.">
+        {counts && counts.demo > 0 ? (
+          <Row
+            icon="🧹"
+            label="Rimuovi dati di esempio"
+            value={counts.demo.toLocaleString('it-IT')}
+            onClick={async () => {
+              const n = await removeDemoData();
+              showToast(`${n} transazioni di esempio rimosse`);
+            }}
+          />
+        ) : (
+          <Row icon="🧪" label="Carica dati di esempio" onClick={() => setConfirm('demo')} />
+        )}
+        <Row icon="🗑️" label="Cancella tutto" destructive onClick={() => setConfirm('clear')} />
       </ListGroup>
 
       <ListGroup header="Sicurezza">
@@ -49,6 +77,39 @@ export function SettingsPage() {
         />
         <Row icon="🎨" label="Design system" href="#/design" chevron />
       </ListGroup>
+
+      <ConfirmSheet
+        open={confirm === 'demo'}
+        onClose={() => setConfirm(null)}
+        emoji="🧪"
+        title="Caricare i dati di esempio?"
+        confirmLabel="Carica dati di esempio"
+        onConfirm={async () => {
+          const n = await loadDemoData(today());
+          setConfirm(null);
+          showToast(`${n} transazioni di esempio`);
+        }}
+      >
+        Circa 4 mesi di spese realistiche per provare l'app. Potrai rimuoverle in qualsiasi momento.
+      </ConfirmSheet>
+
+      <ConfirmSheet
+        open={confirm === 'clear'}
+        onClose={() => setConfirm(null)}
+        emoji="⚠️"
+        title="Cancellare tutti i dati?"
+        confirmLabel="Cancella tutto"
+        secondConfirmLabel="Sì, cancella definitivamente"
+        destructive
+        onConfirm={async () => {
+          await clearAllData();
+          setConfirm(null);
+          showToast('Tutti i dati sono stati cancellati');
+        }}
+      >
+        Transazioni, impostazioni e note verranno eliminate da questo iPhone. Non si può annullare: se non l'hai fatto, esporta
+        prima un backup.
+      </ConfirmSheet>
     </Page>
   );
 }

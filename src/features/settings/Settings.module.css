@@ -1,0 +1,16 @@
+.error {
+  margin: calc(var(--space-4) * -1) var(--gutter) var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-negative-soft);
+  color: var(--color-negative);
+  font-size: var(--text-subhead);
+}
+.preview {
+  text-align: left;
+}
+.warning {
+  margin-top: var(--space-3);
+  font-size: var(--text-footnote);
+  color: var(--color-warning);
+}

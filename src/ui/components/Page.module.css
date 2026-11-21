@@ -99,3 +99,26 @@
 .iconButton:active {
   opacity: 0.5;
 }
+.withFooter {
+  padding-bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 44px + var(--space-8));
+}
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--tabbar-height) + var(--safe-bottom));
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 40px;
+  padding: var(--space-2) calc(var(--gutter) + var(--safe-right)) var(--space-2) calc(var(--gutter) + var(--safe-left));
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: var(--hairline) solid var(--color-separator);
+}

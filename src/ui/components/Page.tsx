@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type Ref } from 'react';
 import styles from './Page.module.css';
 import { cx } from './cx';
 
@@ -10,10 +10,24 @@ interface PageProps {
   grouped?: boolean;
   leading?: ReactNode;
   trailing?: ReactNode;
+  /** The scroll container, e.g. for list virtualisation. */
+  scrollRef?: Ref<HTMLDivElement>;
+  /** Pinned above the tab bar (Notion-like totals row). */
+  footer?: ReactNode;
   children: ReactNode;
 }
 
-export function Page({ title, subtitle, titleMode = 'large', grouped = false, leading, trailing, children }: PageProps) {
+export function Page({
+  title,
+  subtitle,
+  titleMode = 'large',
+  grouped = false,
+  leading,
+  trailing,
+  scrollRef,
+  footer,
+  children,
+}: PageProps) {
   const sentinel = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
@@ -28,7 +42,10 @@ export function Page({ title, subtitle, titleMode = 'large', grouped = false, le
   }, []);
 
   return (
-    <div className={cx(styles.scroll, grouped && styles.grouped, titleMode === 'inline' && styles.inlineOnly)}>
+    <div
+      ref={scrollRef}
+      className={cx(styles.scroll, grouped && styles.grouped, titleMode === 'inline' && styles.inlineOnly, footer !== undefined && styles.withFooter)}
+    >
       <header className={cx(styles.navbar, scrolled && styles.navbarScrolled)}>
         <div className={styles.navLeading}>{leading}</div>
         <div className={styles.navTitle} aria-hidden={titleMode === 'large'}>
@@ -45,6 +62,7 @@ export function Page({ title, subtitle, titleMode = 'large', grouped = false, le
         <div ref={sentinel} />
       )}
       <div className={styles.body}>{children}</div>
+      {footer !== undefined && <div className={styles.footer}>{footer}</div>}
     </div>
   );
 }
