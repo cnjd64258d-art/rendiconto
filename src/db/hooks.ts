@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { compareTransactionsDesc } from '../core/transactions';
-import type { Budget, Category, CategoryGroup, PaymentMethod, RecurringRule, Transaction } from '../core/types';
+import type { Budget, Category, CategoryGroup, PaymentMethod, RecurringRule, SavedView, Transaction } from '../core/types';
 import { db } from './db';
 
 /** All transactions, newest first. `undefined` while loading. */
@@ -30,4 +30,8 @@ export function useRecurringRules(): RecurringRule[] | undefined {
 
 export function useBudgets(): Budget[] | undefined {
   return useLiveQuery(() => db.budgets.toArray(), []);
+}
+
+export function useSavedViews(): SavedView[] | undefined {
+  return useLiveQuery(() => db.savedViews.orderBy('order').toArray(), []);
 }

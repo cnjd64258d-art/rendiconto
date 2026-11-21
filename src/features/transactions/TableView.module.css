@@ -1,0 +1,114 @@
+.table {
+  margin-top: var(--space-2);
+  font-size: var(--text-subhead);
+}
+.head {
+  position: sticky;
+  top: calc(var(--navbar-height) + var(--safe-top));
+  z-index: 5;
+  overflow: hidden;
+  background: var(--color-bg);
+  border-top: var(--hairline) solid var(--color-separator);
+  border-bottom: var(--hairline) solid var(--color-separator);
+}
+.body {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.row {
+  display: grid;
+  align-items: center;
+}
+.bodyRow {
+  height: 44px;
+  border-bottom: var(--hairline) solid var(--color-separator);
+  cursor: default;
+}
+.bodyRow:active .td {
+  background: var(--color-fill);
+}
+.th,
+.td {
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  border-right: var(--hairline) solid var(--color-separator);
+  background: var(--color-bg);
+  white-space: nowrap;
+}
+.th {
+  height: 36px;
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+}
+.pinned {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  box-shadow: 1px 0 0 var(--color-separator);
+}
+.num {
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+}
+.sortButton {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-height: 36px;
+  font: inherit;
+  color: inherit;
+  white-space: nowrap;
+}
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.muted {
+  color: var(--color-text-tertiary);
+}
+.income {
+  color: var(--color-positive);
+}
+.pending {
+  opacity: 0.55;
+}
+.tag {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--tag-bg);
+  color: var(--tag-fg);
+  font-size: var(--text-footnote);
+}
+.groupRow {
+  height: 44px;
+  display: flex;
+  align-items: flex-end;
+  border-bottom: var(--hairline) solid var(--color-separator);
+  background: var(--color-bg);
+}
+.groupLabel {
+  position: sticky;
+  left: 0;
+  padding: 0 var(--gutter) var(--space-1);
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+.groupMeta {
+  font-weight: var(--weight-regular);
+  text-transform: none;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}

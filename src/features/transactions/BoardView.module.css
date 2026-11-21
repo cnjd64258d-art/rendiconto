@@ -1,0 +1,99 @@
+.board {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding: var(--space-3) var(--gutter) var(--space-4);
+  -webkit-overflow-scrolling: touch;
+}
+.column {
+  flex: none;
+  width: min(72vw, 280px);
+  scroll-snap-align: start;
+  scroll-margin-left: var(--gutter);
+}
+.colHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.colTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 85%;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--tag-bg, var(--color-fill));
+  color: var(--tag-fg, var(--color-text));
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.colCount {
+  font-size: var(--text-footnote);
+  color: var(--color-text-tertiary);
+}
+.colTotal {
+  margin: var(--space-1) 0 var(--space-2);
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: var(--hairline) solid var(--color-separator);
+  background: var(--color-surface);
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+.card:active {
+  background: var(--color-fill);
+}
+.cardTitle {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-medium);
+}
+.cardAmount {
+  font-size: var(--text-subhead);
+  font-variant-numeric: tabular-nums;
+}
+.cardMeta {
+  grid-column: 1 / -1;
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.income {
+  color: var(--color-positive);
+}
+.pending {
+  opacity: 0.55;
+}
+.more,
+.empty {
+  padding: var(--space-2) var(--space-1);
+  font-size: var(--text-footnote);
+  color: var(--color-text-tertiary);
+}

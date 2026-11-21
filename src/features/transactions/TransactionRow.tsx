@@ -76,3 +76,20 @@ export function DayHeader({ group, todayISO, yesterdayISO }: { group: DayGroup; 
     </div>
   );
 }
+
+/** Header of a group in the list view (day, month, category…), with the group's totals. */
+export function GroupHeader({ label, emoji, spentCents, incomeCents, count }: { label: string; emoji?: string | undefined; spentCents: number; incomeCents: number; count: number }) {
+  return (
+    <div className={styles.dayHeader}>
+      <span>
+        {emoji !== undefined && <span aria-hidden="true">{emoji} </span>}
+        {label}
+        <span className={styles.groupCount}> · {count}</span>
+      </span>
+      <span className={styles.dayTotal}>
+        {spentCents > 0 && formatCents(spentCents)}
+        {incomeCents > 0 && `${spentCents > 0 ? ' · ' : ''}${formatCents(incomeCents, { signed: true })}`}
+      </span>
+    </div>
+  );
+}

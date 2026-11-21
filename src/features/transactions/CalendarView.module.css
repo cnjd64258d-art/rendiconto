@@ -1,0 +1,117 @@
+.calendar {
+  padding: var(--space-2) 0 var(--space-4);
+}
+.nav {
+  display: grid;
+  grid-template-columns: var(--tap) 1fr var(--tap);
+  align-items: center;
+  padding: 0 var(--space-2);
+}
+.navButton {
+  width: var(--tap);
+  height: var(--tap);
+  font-size: 1.6rem;
+  color: var(--color-accent);
+}
+.navButton:disabled {
+  color: var(--color-text-tertiary);
+}
+.navTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: var(--weight-semibold);
+}
+.navTotal {
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-regular);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  padding: var(--space-2) var(--gutter);
+}
+.weekday {
+  text-align: center;
+  font-size: var(--text-caption);
+  color: var(--color-text-tertiary);
+  padding-bottom: 2px;
+}
+.day,
+.outside {
+  aspect-ratio: 1 / 1.05;
+  min-height: var(--tap);
+  border-radius: var(--radius-sm);
+}
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  background: var(--color-fill);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  transition: transform var(--duration-fast);
+}
+.day:active {
+  transform: scale(0.94);
+}
+.dayNum {
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-medium);
+}
+.dayAmount {
+  font-size: 0.62rem;
+  opacity: 0.85;
+}
+.l1 {
+  background: color-mix(in srgb, var(--color-accent) 14%, var(--color-bg));
+}
+.l2 {
+  background: color-mix(in srgb, var(--color-accent) 30%, var(--color-bg));
+}
+.l3 {
+  background: color-mix(in srgb, var(--color-accent) 52%, var(--color-bg));
+}
+.l4 {
+  background: color-mix(in srgb, var(--color-accent) 78%, var(--color-bg));
+  color: var(--color-text-on-accent);
+}
+.today {
+  box-shadow: inset 0 0 0 2px var(--color-text);
+}
+.selected {
+  box-shadow: inset 0 0 0 2px var(--color-accent), 0 0 0 2px var(--color-bg), 0 0 0 3px var(--color-accent);
+}
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 0 var(--gutter);
+  font-size: var(--text-caption);
+  color: var(--color-text-tertiary);
+}
+.swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+.dayTitle {
+  padding: var(--space-5) var(--gutter) var(--space-1);
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-text-secondary);
+  border-bottom: var(--hairline) solid var(--color-separator);
+}
+.none {
+  padding: var(--space-4) var(--gutter);
+  color: var(--color-text-secondary);
+}

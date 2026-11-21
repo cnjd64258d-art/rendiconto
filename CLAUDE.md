@@ -94,6 +94,18 @@ tests/fixtures synthetic CSVs only
 - Categories / methods (`core/lists.ts`): names unique after normalisation, ids are stable slugs (`cat_cene_fuori`),
   archive instead of delete, ↑/↓ reorder keeps `order` dense. Demo data also adds demo rules (`demo_rule_*`).
 
+## Implementation notes (M5)
+- Views (`core/views.ts`, pure): `ViewConfig { layout, filter, sort, groupBy, boardBy, columns }` is what a
+  `savedViews` row stores (`normalizeConfig` reads old/partial rows defensively). Filters: OR inside a property,
+  AND across properties; period on accrual month by default or payment date; amount range on my share; search
+  over title, notes, tags, category and method (normalised), and an amount typed in the search matches exactly.
+  `SearchCache` keeps the per-row search text for a data snapshot so typing stays instant with 6,000+ rows.
+- Transactions screen: Notion-like tabs (Tutte + saved views; tap the active tab to rename/delete), search,
+  Filtri sheet, layout/sort/group sheet. Unsaved changes live in `features/transactions/viewState.ts`
+  (survive tab switches, not reloads) with "Salva" / "Ripristina". List and Table are virtualised; the table
+  pins its header under the nav bar and its first column, and syncs header scroll in JS. Board caps 60 cards
+  per column. Calendar heatmap is by payment date, intensity vs the month's 90th-percentile day.
+
 ## Data model (agreed plan, Dexie v1 from M2)
 transactions, categoryGroups, categories, paymentMethods, people, recurringRules,
 installmentPlans, settlements, budgets, savingsGoals, savedViews, importBatches, yearNotes, meta.
