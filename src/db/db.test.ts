@@ -120,3 +120,48 @@ describe('imports', () => {
     expect(await db.importBatches.count()).toBe(0);
   });
 });
+
+describe('recurring', () => {
+  it('generates pending rows once, confirms them, and deletes only pending rows with the rule', async () => {
+    const db = fresh();
+    const { saveRule, generateRecurring, confirmPending, deleteRule } = await import('./recurring');
+    const rule = await saveRule(
+      {
+        title: 'Rata Mutuo',
+        amountCents: 73443,
+        isEstimate: false,
+        frequency: 'monthly',
+        dayOfMonth: 15,
+        startDate: '2026-09-01',
+        categoryId: 'cat_mutuo',
+        paymentMethodId: 'pm_conto',
+        active: true,
+      },
+      undefined,
+      db,
+    );
+    expect(await generateRecurring('2026-11-21', db)).toBe(3);
+    expect(await generateRecurring('2026-11-21', db)).toBe(0);
+    const rows = await db.transactions.where('recurringRuleId').equals(rule.id).sortBy('date');
+    expect(rows.map((r) => [r.date, r.status])).toEqual([
+      ['2026-09-15', 'pending'],
+      ['2026-10-15', 'pending'],
+      ['2026-11-15', 'pending'],
+    ]);
+    await confirmPending(rows[0]?.id ?? '', db);
+    await deleteRule(rule.id, db);
+    expect(await db.recurringRules.count()).toBe(0);
+    expect((await db.transactions.toArray()).map((t) => [t.date, t.status])).toEqual([['2026-09-15', 'confirmed']]);
+  });
+
+  it('demo data brings rules, and removing it takes their pending rows too', async () => {
+    const db = fresh();
+    const { generateRecurring } = await import('./recurring');
+    await loadDemoData('2026-11-21', db);
+    expect(await db.recurringRules.count()).toBeGreaterThan(0);
+    expect(await generateRecurring('2026-11-21', db)).toBe(1);
+    await removeDemoData(db);
+    expect(await db.recurringRules.count()).toBe(0);
+    expect(await db.transactions.count()).toBe(0);
+  });
+});

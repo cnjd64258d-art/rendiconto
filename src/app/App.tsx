@@ -8,6 +8,10 @@ import { TransactionsPage } from '../features/transactions/TransactionsPage';
 import { EmptyState, Page, ToastLayer } from '../ui/components';
 import { BackupPage } from '../features/settings/BackupPage';
 import { ImportPage } from '../features/settings/ImportPage';
+import { CategoriesPage } from '../features/settings/CategoriesPage';
+import { MethodsPage } from '../features/settings/MethodsPage';
+import { RecurringPage } from '../features/settings/RecurringPage';
+import { generateRecurring } from '../db/recurring';
 import { openEditor, openNewTransaction } from './editor';
 import styles from './App.module.css';
 import { consumeLaunchFlag, parseRoute, useHash, type Route } from './router';
@@ -25,6 +29,16 @@ export function App() {
   useEffect(() => {
     // No tap yet, so iOS won't show the keyboard: the sheet opens, one tap on the amount does the rest.
     if (launchedToAdd) openEditor(null);
+  }, []);
+
+  useEffect(() => {
+    // Recurring payments that matured become "da confermare": at launch and whenever the app comes back.
+    const run = () => {
+      if (document.visibilityState === 'visible') void generateRecurring();
+    };
+    run();
+    document.addEventListener('visibilitychange', run);
+    return () => document.removeEventListener('visibilitychange', run);
   }, []);
 
   return (
@@ -56,6 +70,12 @@ function Screen({ route }: { route: Route }) {
       return <BackupPage />;
     case 'import':
       return <ImportPage />;
+    case 'categories':
+      return <CategoriesPage />;
+    case 'methods':
+      return <MethodsPage />;
+    case 'recurring':
+      return <RecurringPage />;
     case 'design':
       return (
         <Suspense fallback={null}>

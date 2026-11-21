@@ -4,6 +4,7 @@ import { isStandalone, useStorageStatus } from '../../app/storage';
 import { today } from '../../core/dates';
 import { formatBytes, formatFullDate } from '../../core/format';
 import { db } from '../../db/db';
+import { generateRecurring } from '../../db/recurring';
 import { clearAllData, loadDemoData, removeDemoData } from '../../db/repo';
 import { BackLink, ConfirmSheet, ListGroup, Page, Row, showToast } from '../../ui/components';
 
@@ -28,9 +29,9 @@ export function SettingsPage() {
   return (
     <Page title="Impostazioni" grouped leading={<BackLink href="#/" label="Oggi" />}>
       <ListGroup header="Dati">
-        <Row icon="🏷️" label="Categorie" value={SOON} disabled />
-        <Row icon="💳" label="Metodi di pagamento" value={SOON} disabled />
-        <Row icon="🔁" label="Ricorrenti" value={SOON} disabled />
+        <Row icon="🏷️" label="Categorie" href="#/impostazioni/categorie" chevron />
+        <Row icon="💳" label="Metodi di pagamento" href="#/impostazioni/metodi" chevron />
+        <Row icon="🔁" label="Ricorrenti" href="#/impostazioni/ricorrenti" chevron />
         <Row icon="🧾" label="Piani a rate" value={SOON} disabled />
         <Row icon="🤝" label="Spese condivise" value={SOON} disabled />
       </ListGroup>
@@ -86,6 +87,7 @@ export function SettingsPage() {
         confirmLabel="Carica dati di esempio"
         onConfirm={async () => {
           const n = await loadDemoData(today());
+          await generateRecurring();
           setConfirm(null);
           showToast(`${n} transazioni di esempio`);
         }}

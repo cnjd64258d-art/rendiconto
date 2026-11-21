@@ -85,3 +85,10 @@ export function daysLeftInMonth(date: ISODate): number {
 export function compareISO(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
 }
+
+/** Last day of a `YYYY-MM` month. */
+export function endOfMonthDate(month: YearMonth): ISODate {
+  const y = Number(month.slice(0, 4));
+  const m = Number(month.slice(5, 7));
+  return `${month}-${String(daysInMonth(y, m)).padStart(2, '0')}`;
+}

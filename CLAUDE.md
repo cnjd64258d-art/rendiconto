@@ -80,6 +80,20 @@ tests/fixtures synthetic CSVs only
 - Screen: `#/impostazioni/import`. Acceptance test: `tests/import.acceptance.test.ts` with synthetic fixtures
   (imported via `?raw`, no Node types needed).
 
+## Implementation notes (M4)
+- Recurring rules (`core/recurring.ts`): monthly / quarterly / yearly on `dayOfMonth` (clamped to short months),
+  counted from the start month. `generatedThrough` is the generation cursor: at app open and on return to
+  foreground (`App.tsx` → `db/recurring.ts#generateRecurring`) every matured occurrence becomes a
+  `status: 'pending'` transaction linked by `recurringRuleId`. New rules, schedule changes and resumed rules never
+  back-fill past dates. Pending rows are excluded from totals until confirmed (tap "Conferma", or edit + Salva).
+  Deleting a rule deletes only its pending rows.
+- Today (`core/month.ts#monthOverview`, accrual month): spent/income/balance (confirmed only), budget =
+  latest budget per target (a group budget replaces its categories), "al giorno" per decision 3, projection =
+  spent + still-due fixed costs + everyday (non-recurring) daily pace × remaining days, vs income + due income.
+  Without budgets (until M6) the hero shows spent only.
+- Categories / methods (`core/lists.ts`): names unique after normalisation, ids are stable slugs (`cat_cene_fuori`),
+  archive instead of delete, ↑/↓ reorder keeps `order` dense. Demo data also adds demo rules (`demo_rule_*`).
+
 ## Data model (agreed plan, Dexie v1 from M2)
 transactions, categoryGroups, categories, paymentMethods, people, recurringRules,
 installmentPlans, settlements, budgets, savingsGoals, savedViews, importBatches, yearNotes, meta.

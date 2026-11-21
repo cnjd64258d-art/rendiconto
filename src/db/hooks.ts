@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { compareTransactionsDesc } from '../core/transactions';
-import type { Category, CategoryGroup, PaymentMethod, Transaction } from '../core/types';
+import type { Budget, Category, CategoryGroup, PaymentMethod, RecurringRule, Transaction } from '../core/types';
 import { db } from './db';
 
 /** All transactions, newest first. `undefined` while loading. */
@@ -22,4 +22,12 @@ export function usePaymentMethods(): PaymentMethod[] | undefined {
 
 export function useMeta<T>(key: string): T | null | undefined {
   return useLiveQuery(async () => ((await db.meta.get(key))?.value as T | undefined) ?? null, [key]);
+}
+
+export function useRecurringRules(): RecurringRule[] | undefined {
+  return useLiveQuery(() => db.recurringRules.toArray(), []);
+}
+
+export function useBudgets(): Budget[] | undefined {
+  return useLiveQuery(() => db.budgets.toArray(), []);
 }
