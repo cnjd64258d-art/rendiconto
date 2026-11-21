@@ -1,0 +1,9 @@
+.more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  margin: var(--space-4) var(--gutter) 0;
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-medium);
+}

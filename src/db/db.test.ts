@@ -1,0 +1,99 @@
+import 'fake-indexeddb/auto';
+import { afterEach, describe, expect, it } from 'vitest';
+import { createBackup, parseBackup } from '../core/backup/backup';
+import { validateDraft } from '../core/transactions';
+import { RendicontoDB } from './db';
+import {
+  addTransaction,
+  clearAllData,
+  deleteTransaction,
+  loadDemoData,
+  readAllTables,
+  removeDemoData,
+  replaceAllTables,
+  restoreTransaction,
+  updateTransaction,
+} from './repo';
+
+let n = 0;
+const dbs: RendicontoDB[] = [];
+afterEach(async () => {
+  for (const d of dbs.splice(0)) await d.delete();
+});
+function fresh() {
+  const d = new RendicontoDB(`test-${++n}`);
+  dbs.push(d);
+  return d;
+}
+
+const input = () => {
+  const r = validateDraft({
+    kind: 'expense',
+    amount: '12,40',
+    title: 'Pranzo',
+    categoryId: 'cat_cibo',
+    paymentMethodId: 'pm_satispay',
+    toPaymentMethodId: null,
+    date: '2026-11-21',
+    accrualMonth: '',
+    notes: '',
+    tags: '',
+  });
+  if (!r.ok) throw new Error('bad draft');
+  return r.value;
+};
+
+describe('database', () => {
+  it('seeds categories, groups and methods on first open', async () => {
+    const db = fresh();
+    expect(await db.categories.count()).toBe(16);
+    expect(await db.categoryGroups.count()).toBe(7);
+    expect((await db.paymentMethods.orderBy('order').toArray()).map((m) => m.name)).toEqual([
+      'Conto Corrente',
+      'PayPal',
+      'Satispay',
+      'Contanti',
+    ]);
+  });
+
+  it('adds, edits, deletes and restores a transaction', async () => {
+    const db = fresh();
+    const t = await addTransaction(input(), db);
+    await updateTransaction(t.id, { ...input(), amountCents: 999 }, db);
+    expect((await db.transactions.get(t.id))?.amountCents).toBe(999);
+    expect((await db.transactions.get(t.id))?.createdAt).toBe(t.createdAt);
+    const deleted = await deleteTransaction(t.id, db);
+    expect(await db.transactions.count()).toBe(0);
+    if (deleted) await restoreTransaction(deleted, db);
+    expect(await db.transactions.count()).toBe(1);
+  });
+
+  it('backs up and restores every table', async () => {
+    const source = fresh();
+    await addTransaction(input(), source);
+    await loadDemoData('2026-11-21', source);
+    await source.meta.put({ key: 'lastBackupAt', value: '2026-11-21T10:00:00Z' });
+    const backup = createBackup(await readAllTables(source), 'test');
+
+    const parsed = parseBackup(JSON.stringify(backup));
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    const target = fresh();
+    await addTransaction(input(), target); // will be replaced
+    await replaceAllTables(parsed.backup.tables, target);
+    expect(await readAllTables(target)).toEqual(await readAllTables(source));
+  });
+
+  it('removes demo data only, and clears everything back to the seed', async () => {
+    const db = fresh();
+    await addTransaction(input(), db);
+    const count = await loadDemoData('2026-11-21', db);
+    expect(await db.transactions.count()).toBe(count + 1);
+    await removeDemoData(db);
+    expect(await db.transactions.count()).toBe(1);
+    await db.categories.update('cat_cibo', { name: 'Ristoranti' });
+    await clearAllData(db);
+    expect(await db.transactions.count()).toBe(0);
+    expect((await db.categories.get('cat_cibo'))?.name).toBe('Cibo');
+  });
+});

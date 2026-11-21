@@ -122,11 +122,13 @@ export function Sheet({ open, onClose, title, label, leading, trailing, children
           onPointerCancel={onPointerUp}
         >
           <div className={styles.handle} aria-hidden="true" />
-          <div className={styles.header}>
-            <div className={styles.leading}>{leading}</div>
-            <div className={styles.title}>{title}</div>
-            <div className={styles.trailing}>{trailing}</div>
-          </div>
+          {(title !== undefined || leading !== undefined || trailing !== undefined) && (
+            <div className={styles.header}>
+              <div className={styles.leading}>{leading}</div>
+              <div className={styles.title}>{title}</div>
+              <div className={styles.trailing}>{trailing}</div>
+            </div>
+          )}
         </div>
         <div className={styles.content}>{children}</div>
       </div>

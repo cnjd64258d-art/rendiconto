@@ -48,13 +48,27 @@ export function EmptyState({ emoji, title, children, action }: EmptyStateProps) 
 }
 
 /* Toast: a tiny global store, so any feature can confirm an action. */
-type ToastState = { id: number; message: string } | null;
+interface ToastOptions {
+  action?: { label: string; onClick: () => void };
+  icon?: 'check' | 'none';
+}
+type ToastState = ({ id: number; message: string } & ToastOptions) | null;
 let toast: ToastState = null;
+let nextId = 1;
 const listeners = new Set<() => void>();
 
-export function showToast(message: string): void {
-  toast = { id: (toast?.id ?? 0) + 1, message };
+function emit() {
   listeners.forEach((l) => l());
+}
+
+export function showToast(message: string, options: ToastOptions = {}): void {
+  toast = { id: nextId++, message, ...options };
+  emit();
+}
+
+export function hideToast(): void {
+  toast = null;
+  emit();
 }
 
 function subscribe(l: () => void) {
@@ -66,12 +80,12 @@ export function ToastLayer() {
   const current = useSyncExternalStore(subscribe, () => toast, () => null);
   useEffect(() => {
     if (!current) return;
-    const t = window.setTimeout(() => {
-      if (toast?.id === current.id) {
-        toast = null;
-        listeners.forEach((l) => l());
-      }
-    }, 1600);
+    const t = window.setTimeout(
+      () => {
+        if (toast?.id === current.id) hideToast();
+      },
+      current.action ? 4500 : 1600,
+    );
     return () => window.clearTimeout(t);
   }, [current]);
 
@@ -79,10 +93,24 @@ export function ToastLayer() {
     <div className={styles.toastLayer} aria-live="polite">
       {current && (
         <div key={current.id} className={styles.toast}>
-          <svg className={styles.check} width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-            <path d="M4 9.5l3.2 3L14 5.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          {current.icon !== 'none' && (
+            <svg className={styles.check} width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+              <path d="M4 9.5l3.2 3L14 5.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
           {current.message}
+          {current.action && (
+            <button
+              type="button"
+              className={styles.toastAction}
+              onClick={() => {
+                current.action?.onClick();
+                hideToast();
+              }}
+            >
+              {current.action.label}
+            </button>
+          )}
         </div>
       )}
     </div>

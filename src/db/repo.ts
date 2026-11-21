@@ -1,0 +1,85 @@
+import { generateDemoTransactions } from '../core/demo';
+import { SEED_CATEGORIES, SEED_GROUPS, SEED_PAYMENT_METHODS } from '../core/seed';
+import type { TransactionInput } from '../core/transactions';
+import { TABLE_NAMES, type Id, type Tables, type Transaction } from '../core/types';
+import { db as defaultDb, type RendicontoDB } from './db';
+
+export function newId(): Id {
+  return crypto.randomUUID();
+}
+
+export async function addTransaction(input: TransactionInput, db: RendicontoDB = defaultDb): Promise<Transaction> {
+  const now = new Date().toISOString();
+  const t: Transaction = { ...input, id: newId(), createdAt: now, updatedAt: now };
+  await db.transactions.add(t);
+  return t;
+}
+
+const PRESERVED_LINKS = ['recurringRuleId', 'installmentPlanId', 'installmentIndex', 'split', 'importBatchId'] as const;
+
+export async function updateTransaction(id: Id, input: TransactionInput, db: RendicontoDB = defaultDb): Promise<void> {
+  const existing = await db.transactions.get(id);
+  if (!existing) throw new Error('Transaction not found');
+  // Replace the editable fields, keep identity, links and creation time.
+  const next: Record<string, unknown> = { ...input, id, createdAt: existing.createdAt, updatedAt: new Date().toISOString() };
+  for (const key of PRESERVED_LINKS) {
+    if (existing[key] !== undefined && next[key] === undefined) next[key] = existing[key];
+  }
+  await db.transactions.put(next as unknown as Transaction);
+}
+
+/** Deletes and returns the row, so the UI can offer "Annulla". */
+export async function deleteTransaction(id: Id, db: RendicontoDB = defaultDb): Promise<Transaction | undefined> {
+  return db.transaction('rw', db.transactions, async () => {
+    const t = await db.transactions.get(id);
+    if (t) await db.transactions.delete(id);
+    return t;
+  });
+}
+
+export async function restoreTransaction(t: Transaction, db: RendicontoDB = defaultDb): Promise<void> {
+  await db.transactions.put(t);
+}
+
+export async function readAllTables(db: RendicontoDB = defaultDb): Promise<Tables> {
+  const entries = await Promise.all(TABLE_NAMES.map(async (name) => [name, await db.table(name).toArray()] as const));
+  return Object.fromEntries(entries) as unknown as Tables;
+}
+
+/** Replaces everything with a backup's content, atomically. */
+export async function replaceAllTables(tables: Tables, db: RendicontoDB = defaultDb): Promise<void> {
+  await db.transaction('rw', db.allTables, async () => {
+    for (const name of TABLE_NAMES) {
+      const table = db.table(name);
+      await table.clear();
+      const rows = tables[name] as unknown[];
+      if (rows.length > 0) await table.bulkPut(rows);
+    }
+  });
+}
+
+/** Deletes all data and restores the starting categories and methods. */
+export async function clearAllData(db: RendicontoDB = defaultDb): Promise<void> {
+  await db.transaction('rw', db.allTables, async () => {
+    for (const table of db.allTables) await table.clear();
+    await db.categoryGroups.bulkAdd(SEED_GROUPS);
+    await db.categories.bulkAdd(SEED_CATEGORIES);
+    await db.paymentMethods.bulkAdd(SEED_PAYMENT_METHODS);
+  });
+}
+
+export async function loadDemoData(today: string, db: RendicontoDB = defaultDb): Promise<number> {
+  const demo = generateDemoTransactions(today);
+  await db.transactions.bulkPut(demo);
+  return demo.length;
+}
+
+export async function removeDemoData(db: RendicontoDB = defaultDb): Promise<number> {
+  return db.transactions.where('id').startsWith('demo_').delete();
+}
+
+export async function setMeta(key: string, value: unknown, db: RendicontoDB = defaultDb): Promise<void> {
+  await db.meta.put({ key, value });
+}
+
+export const META_LAST_BACKUP = 'lastBackupAt';

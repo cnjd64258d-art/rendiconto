@@ -33,7 +33,7 @@ export const AmountInput = forwardRef<HTMLInputElement, AmountInputProps>(functi
         autoFocus={autoFocus}
         aria-invalid={invalid}
         onChange={(e) => onChange(sanitizeAmountTyping(e.target.value))}
-        size={Math.max(4, value.length + 1)}
+        style={{ width: `${Math.max(4, value.length) + 0.5}ch` }}
       />
       <span className={styles.currency} aria-hidden="true">
         €
