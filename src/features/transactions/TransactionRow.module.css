@@ -72,3 +72,8 @@
   text-transform: none;
   letter-spacing: 0;
 }
+.groupCount {
+  font-weight: var(--weight-regular);
+  color: var(--color-text-tertiary);
+  text-transform: none;
+}

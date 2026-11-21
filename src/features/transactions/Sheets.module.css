@@ -1,0 +1,104 @@
+.body {
+  padding: 0 0 var(--space-6);
+}
+.label {
+  padding: var(--space-4) var(--gutter) var(--space-2);
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+}
+.segment {
+  padding: var(--space-3) var(--gutter) 0;
+}
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 0 var(--gutter);
+}
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--gutter) 0;
+}
+.field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-fill);
+}
+.field > span {
+  flex: none;
+  font-size: var(--text-subhead);
+  color: var(--color-text-secondary);
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.hint {
+  padding: var(--space-2) var(--gutter) 0;
+  font-size: var(--text-footnote);
+  color: var(--color-text-tertiary);
+}
+.row {
+  display: grid;
+  grid-template-columns: 5.5em 1fr;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 52px;
+  margin: 0 var(--gutter);
+  padding: 0 var(--space-4);
+  background: var(--color-fill);
+}
+.row:first-of-type {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-bottom: var(--hairline) solid var(--color-separator);
+}
+.row:last-of-type {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+.row > span {
+  color: var(--color-text-secondary);
+  font-size: var(--text-subhead);
+}
+.error {
+  padding: var(--space-3) var(--gutter) 0;
+  font-size: var(--text-footnote);
+  color: var(--color-negative);
+}
+.actions {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--gutter) 0;
+}
+.sheetHeader {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 var(--space-2) var(--space-2);
+}
+.sheetHeader > :last-child {
+  justify-self: end;
+}
+.sheetHeader > :first-child {
+  justify-self: start;
+}
+.sheetTitle {
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+}
+.emoji {
+  font-size: 1.4rem;
+}

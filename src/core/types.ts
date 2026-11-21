@@ -145,6 +145,8 @@ export interface SavedView {
   filter: unknown;
   sort: { field: string; direction: 'asc' | 'desc' }[];
   groupBy?: string;
+  /** Board columns: category, group or method. */
+  boardBy?: string;
   columns?: string[];
   order: number;
 }

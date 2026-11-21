@@ -1,0 +1,99 @@
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 var(--gutter);
+  border-bottom: var(--hairline) solid var(--color-separator);
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+.tab,
+.tabAdd {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  font-size: var(--text-subhead);
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -0.5px;
+  white-space: nowrap;
+}
+.tabActive {
+  color: var(--color-text);
+  font-weight: var(--weight-medium);
+  border-bottom-color: var(--color-text);
+}
+.tabAdd {
+  width: var(--tap);
+  justify-content: center;
+  font-size: 1.1rem;
+}
+.toolbar {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--gutter) var(--space-2);
+}
+.search {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 38px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-fill);
+  color: var(--color-text-tertiary);
+}
+.search input {
+  flex: 1;
+  min-width: 0;
+  min-height: 38px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.filterButton {
+  flex: none;
+  min-height: 38px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-fill);
+  color: var(--color-text);
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-medium);
+}
+.filterOn {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+.dirty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--gutter) var(--space-2);
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}
+.dirty span {
+  flex: 1;
+}
+.dirty button {
+  min-height: 32px;
+  color: var(--color-accent);
+  font-size: var(--text-footnote);
+}
+.dirtyPrimary {
+  font-weight: var(--weight-semibold);
+}
+.layoutIcon {
+  display: block;
+}
