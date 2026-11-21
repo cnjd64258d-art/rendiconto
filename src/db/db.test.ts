@@ -97,3 +97,26 @@ describe('database', () => {
     expect((await db.categories.get('cat_cibo'))?.name).toBe('Cibo');
   });
 });
+
+describe('imports', () => {
+  it('commits a batch idempotently and can undo it', async () => {
+    const { parseCsv } = await import('../core/csv/parse');
+    const { planImport, guessMapping } = await import('../core/csv/import');
+    const { SEED_CATEGORIES, SEED_GROUPS, SEED_PAYMENT_METHODS } = await import('../core/seed');
+    const { commitImport, existingKeyCounts, undoImport } = await import('./imports');
+    const db = fresh();
+    const csv = parseCsv('data,descrizione,importo,categoria\n2026-01-01,Caffè,1.5,Cibo\n2026-01-01,Caffè,1.5,Cibo\n2026-01-02,Mutuo,734.43,Mutuo\n');
+    const makePlan = async () =>
+      planImport(
+        csv,
+        { kind: 'transactions', mapping: guessMapping(csv.header, 'transactions'), decimal: '.', categoryOverrides: {}, methodOverrides: {}, defaultMethodId: 'pm_conto' },
+        { categories: SEED_CATEGORIES, groups: SEED_GROUPS, methods: SEED_PAYMENT_METHODS, existing: await existingKeyCounts(db) },
+      );
+    const first = await makePlan();
+    const batch = await commitImport(first, 'a.csv', db);
+    expect(await db.transactions.count()).toBe(3);
+    expect((await makePlan()).toImport).toHaveLength(0);
+    expect(await undoImport(batch.id, db)).toBe(3);
+    expect(await db.importBatches.count()).toBe(0);
+  });
+});

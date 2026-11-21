@@ -1,0 +1,117 @@
+.select {
+  max-width: 55%;
+  min-height: 36px;
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-fill);
+  color: var(--color-text);
+  text-align: right;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.mapRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--row-height);
+  padding: var(--space-1) var(--space-4);
+  background: var(--color-surface);
+}
+.mapLabel {
+  min-width: 0;
+}
+.mapCount {
+  display: block;
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}
+.block {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+}
+.segment {
+  padding: var(--space-2) var(--space-4) var(--space-3);
+  background: var(--color-surface);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-subhead);
+  font-variant-numeric: tabular-nums;
+}
+.table th {
+  padding: var(--space-2) var(--space-1);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-text-secondary);
+  text-align: right;
+  border-bottom: var(--hairline) solid var(--color-separator);
+}
+.table th:first-child,
+.table td:first-child {
+  text-align: left;
+}
+.table td {
+  padding: var(--space-2) var(--space-1);
+  text-align: right;
+  border-bottom: var(--hairline) solid var(--color-separator);
+}
+.table tr:last-child td {
+  border-bottom: 0;
+}
+.ok {
+  color: var(--color-positive);
+  font-weight: var(--weight-semibold);
+}
+.ko {
+  color: var(--color-negative);
+  font-weight: var(--weight-semibold);
+}
+.muted {
+  color: var(--color-text-secondary);
+}
+.issue {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-footnote);
+  background: var(--color-surface);
+}
+.issue + .issue {
+  border-top: var(--hairline) solid var(--color-separator);
+}
+.issueLine {
+  flex: none;
+  width: 4.5em;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.cta {
+  padding: 0 var(--gutter) var(--space-6);
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+  margin: 0 var(--gutter) var(--space-6);
+}
+.stat {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: var(--hairline) solid var(--color-separator);
+}
+.statValue {
+  display: block;
+  font-size: var(--text-title2);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.statLabel {
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}

@@ -12,6 +12,7 @@ describe('parseRoute', () => {
     ['#/impostazioni', 'settings'],
     ['#/design', 'design'],
     ['#/impostazioni/backup', 'backup'],
+    ['#/impostazioni/import', 'import'],
     ['#/boh', 'notFound'],
   ])('%j → %s', (hash, name) => {
     expect(parseRoute(hash).name).toBe(name);

@@ -11,7 +11,7 @@ interface TabBarProps {
 export function TabBar({ route, onAdd }: TabBarProps) {
   return (
     <nav className={styles.bar} aria-label="Sezioni">
-      <Tab href="#/" label="Oggi" active={route === 'today' || route === 'settings' || route === 'backup'} icon={(a) => <TodayIcon filled={a} />} />
+      <Tab href="#/" label="Oggi" active={route === 'today' || route === 'settings' || route === 'backup' || route === 'import'} icon={(a) => <TodayIcon filled={a} />} />
       <Tab href="#/transazioni" label="Transazioni" active={route === 'transactions'} icon={(a) => <ListIcon filled={a} />} />
       <div className={styles.add}>
         <button type="button" className={styles.addButton} onClick={onAdd} aria-label="Aggiungi transazione">

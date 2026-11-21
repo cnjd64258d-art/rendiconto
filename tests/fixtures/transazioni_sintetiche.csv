@@ -1,0 +1,19 @@
+﻿data,descrizione,importo,categoria,categoria_originale,metodo_pagamento,periodo_rendiconto,note
+2022-12-23,Corso Sci CAI Milano,271.5,Altri Oggetti,Oggetti Personali,Conto Corrente,2023,
+2022-12-24,Bolletta Luce Novembre-Dicembre,197.0,Utenze,Bolletta,PayPal,2023,
+2023-01-02,Colazione,2.4,Cibo,Colazioni,Satispay,2023,
+2023-01-02,Colazione,2.4,Cibo,Colazioni,Satispay,2023,
+2023-03-15,"Pranzo, Bar Centrale",12.9,cibo ,Pranzi,satispay,2023,
+2023-06-10,McDonald’s,8.5,Cibo,Cene,Contanti,2023,data corretta (era 2023-06-01)
+2023-12-30,Volo Capodanno,120,Viaggi,Viaggi,PayPal,2023,
+2024-01-03,"Regalo ""Natale""",45.99,Altri Oggetti,Regali,Conto Corrente,2023,
+2024-02-01,ShareNow,14.9,Trasporti,Trasporti,PayPal,2024,
+2024-02-15,Rata Mutuo,734.43,Mutuo,Mutuo,Conto Corrente,2024,
+2024-12-20,Volo Pasqua 2025,210,Viaggi,Viaggi,Conto Corrente,2024,
+2025-05-05,ALIMENTARI esselunga,68.12,Alimentari ,Spesa,Conto Corrente,2025,
+2025-07-01,Zara,60,Abbigliamento,Vestiti,Conto Corrente,2025,
+2026-01-15,Rata Mutuo,734.43,Mutuo,Mutuo,Conto Corrente,2026-01,
+2026-05-20,Spesa Coop,68.12,Alimentari,Alimentari ,Satispay,2026-05,
+2026-07-04,Saldi,60,Abbigliamento,abbigliamento,Conto Corrente,2026-07,
+2026-08-01,"Weekend, ""neve""
+nota su due righe",150,Viaggi,Viaggi,Conto Corrente,2026-08,

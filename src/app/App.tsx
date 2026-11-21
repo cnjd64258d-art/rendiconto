@@ -7,6 +7,7 @@ import { TodayPage } from '../features/today/TodayPage';
 import { TransactionsPage } from '../features/transactions/TransactionsPage';
 import { EmptyState, Page, ToastLayer } from '../ui/components';
 import { BackupPage } from '../features/settings/BackupPage';
+import { ImportPage } from '../features/settings/ImportPage';
 import { openEditor, openNewTransaction } from './editor';
 import styles from './App.module.css';
 import { consumeLaunchFlag, parseRoute, useHash, type Route } from './router';
@@ -53,6 +54,8 @@ function Screen({ route }: { route: Route }) {
       return <SettingsPage />;
     case 'backup':
       return <BackupPage />;
+    case 'import':
+      return <ImportPage />;
     case 'design':
       return (
         <Suspense fallback={null}>

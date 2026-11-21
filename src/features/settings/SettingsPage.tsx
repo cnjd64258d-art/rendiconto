@@ -40,7 +40,7 @@ export function SettingsPage() {
         footer="I dati restano solo su questo iPhone. «Protetto» significa che iOS non li cancellerà per liberare spazio."
       >
         <Row icon="💾" label="Backup ed export" href="#/impostazioni/backup" chevron />
-        <Row icon="📥" label="Importa CSV" value={SOON} disabled />
+        <Row icon="📥" label="Importa CSV" href="#/impostazioni/import" chevron />
         <Row icon="🧮" label="Transazioni salvate" value={counts ? counts.all.toLocaleString('it-IT') : '—'} />
         <Row icon="🛡️" label="Archivio" value={persisted} />
         <Row icon="📦" label="Spazio usato" value={usage} />

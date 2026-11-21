@@ -1,7 +1,7 @@
 {
   "name": "rendiconto",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "Rendiconto: personal finance PWA for iPhone. Local-only data.",
   "scripts": {
