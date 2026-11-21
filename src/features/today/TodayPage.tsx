@@ -138,9 +138,9 @@ export function TodayPage() {
           )}
 
           <dl className={styles.stats}>
-            <Stat label="Entrate" cents={overview.incomeCents} />
-            <Stat label="Uscite" cents={overview.spentCents} />
-            <Stat label="Saldo" cents={overview.balanceCents} signed />
+            <Stat label="Entrate" cents={overview.incomeCents} tone={styles.statIncome} />
+            <Stat label="Uscite" cents={overview.spentCents} tone={styles.statExpense} />
+            <Stat label="Saldo" cents={overview.balanceCents} signed tone={overview.balanceCents < 0 ? styles.statNegative : styles.statPositive} />
           </dl>
           <p className={styles.projection}>
             Proiezione a fine mese:{' '}
@@ -252,9 +252,9 @@ function alertText(alerts: AlertSummary, nameOf: (l: BudgetLine) => string): str
   return over > 0 ? `${alerts.lines.length} budget da tenere d'occhio (${over} sforati): ${names}` : `${alerts.lines.length} budget oltre l'80%: ${names}`;
 }
 
-function Stat({ label, cents, signed = false }: { label: string; cents: number; signed?: boolean }) {
+function Stat({ label, cents, signed = false, tone }: { label: string; cents: number; signed?: boolean; tone?: string | undefined }) {
   return (
-    <div className={styles.stat}>
+    <div className={cx(styles.stat, tone)}>
       <dt>{label}</dt>
       <dd aria-label={`${label}: ${spokenCents(cents)}`}>
         <AnimatedAmount cents={cents} decimals={false} signed={signed} />

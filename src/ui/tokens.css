@@ -32,6 +32,12 @@
   --color-negative: #c4372d;
   --color-warning-soft: #fbefd9;
   --color-negative-soft: #f9e2df;
+  --color-positive-soft: #e7f4ec;
+  /* Income / expense as text (≥ 4.5:1 on their soft tint), same hues as the charts */
+  --color-income: #1d4ed8;
+  --color-income-soft: #eef3fe;
+  --color-expense: #b45309;
+  --color-expense-soft: #fdf1e6;
 
   /* Charts: income vs expenses (validated for CVD on the light surface) */
   --chart-income: #2563eb;
@@ -151,6 +157,11 @@
     --color-negative: #ff7b70;
     --color-warning-soft: #3a2c12;
     --color-negative-soft: #3d1d1a;
+    --color-positive-soft: #12291c;
+    --color-income: #7aa7ff;
+    --color-income-soft: #14213a;
+    --color-expense: #f0a35c;
+    --color-expense-soft: #33230f;
 
     --tag-gray-bg: #2f2f2d;
     --tag-gray-fg: #cfcec9;

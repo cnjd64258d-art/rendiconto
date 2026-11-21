@@ -18,7 +18,7 @@
   display: block;
   margin: var(--space-1) 0 var(--space-1);
   font-size: var(--text-hero);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-bold);
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
@@ -51,16 +51,17 @@
 .stat {
   padding: var(--space-3);
   border-radius: var(--radius-md);
-  border: var(--hairline) solid var(--color-separator);
-  background: var(--color-surface);
+  background: var(--stat-soft, var(--color-surface));
+  color: var(--stat-ink, var(--color-text));
 }
 .stat dt {
   font-size: var(--text-footnote);
-  color: var(--color-text-secondary);
+  font-weight: var(--weight-semibold);
 }
 .stat dd {
   margin: var(--space-1) 0 0;
   font-size: var(--text-title3);
+  font-weight: var(--weight-bold);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -192,4 +193,22 @@
   min-width: 0;
   color: inherit;
   text-decoration: none;
+}
+
+/* Entrate / Uscite / Saldo: the same hues as the charts (income blue, expense orange); balance green or red. */
+.statIncome {
+  --stat-ink: var(--color-income);
+  --stat-soft: var(--color-income-soft);
+}
+.statExpense {
+  --stat-ink: var(--color-expense);
+  --stat-soft: var(--color-expense-soft);
+}
+.statPositive {
+  --stat-ink: var(--color-positive);
+  --stat-soft: var(--color-positive-soft);
+}
+.statNegative {
+  --stat-ink: var(--color-negative);
+  --stat-soft: var(--color-negative-soft);
 }
