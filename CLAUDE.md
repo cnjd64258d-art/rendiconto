@@ -177,6 +177,9 @@ tests/fixtures synthetic CSVs only
   the fallback; removing the PIN removes it. `create`/`get` run straight from a tap: iOS never starts Face ID in a
   web app without one (owner-verified, no automatic attempt). With Face ID on, the lock screen shows a big
   "Usa Face ID" button and the PIN keypad only after "Usa il PIN" (owner's choice). E2E-checked with Chromium's virtual authenticator.
+- Today hero (owner's request): the spent amount is bold; Entrate / Uscite / Saldo are tinted cards using
+  `--color-income(-soft)` (blue) and `--color-expense(-soft)` (orange), the charts' hues darkened for text contrast,
+  and the balance green/red (`--color-positive-soft` / `--color-negative-soft`).
 - Icon: `public/logo.svg` / `logo-dark.svg` (three entries, a ruled line, the total). Settings sub-pages have empty states.
 
 ## Data model (agreed plan, Dexie v1 from M2)
