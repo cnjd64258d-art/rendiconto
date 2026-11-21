@@ -8,6 +8,7 @@ export type Route =
   | { name: 'today' }
   | { name: 'transactions' }
   | { name: 'analysis' }
+  | { name: 'review'; year: number }
   | { name: 'budget' }
   | { name: 'settings' }
   | { name: 'backup' }
@@ -20,6 +21,8 @@ export type Route =
 
 export function parseRoute(hash: string): Route {
   const path = hash.replace(/^#/, '').split('?')[0]?.replace(/\/+$/, '') || '/';
+  const review = /^\/analisi\/anno\/(\d{4})$/.exec(path);
+  if (review) return { name: 'review', year: Number(review[1]) };
   switch (path) {
     case '/':
       return { name: 'today' };

@@ -44,9 +44,10 @@ export function Page({
   return (
     <div
       ref={scrollRef}
+      data-print-flow
       className={cx(styles.scroll, grouped && styles.grouped, titleMode === 'inline' && styles.inlineOnly, footer !== undefined && styles.withFooter)}
     >
-      <header className={cx(styles.navbar, scrolled && styles.navbarScrolled)}>
+      <header data-noprint className={cx(styles.navbar, scrolled && styles.navbarScrolled)}>
         <div className={styles.navLeading}>{leading}</div>
         <div className={styles.navTitle} aria-hidden={titleMode === 'large'}>
           {title}

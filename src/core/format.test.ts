@@ -5,6 +5,8 @@ import {
   formatCentsPlain,
   formatDayShort,
   formatMonth,
+  formatMonthShort,
+  formatCentsCompact,
   formatPercent,
   spokenCents,
 } from './format';
@@ -31,6 +33,10 @@ describe('format it-IT', () => {
   it('formats months and percentages', () => {
     expect(formatMonth('2026-05')).toBe('maggio 2026');
     expect(formatMonth('2026-05', false)).toBe('maggio');
+    expect(formatMonthShort('2026-05')).toBe('mag');
+    expect(formatMonthShort('2026-12', true)).toBe('dic 26');
+    expect(formatCentsCompact(123456)).toBe('1,2k €');
+    expect(formatCentsCompact(-45000)).toBe('-450 €');
     expect(n(formatPercent(0.342))).toBe('34%');
   });
 

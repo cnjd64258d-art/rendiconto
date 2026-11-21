@@ -109,3 +109,56 @@ p {
     transition-duration: 1ms !important;
   }
 }
+
+/*
+ * Printing ("Tira una linea" → PDF from the iOS print/share sheet): A4, light colours,
+ * everything in normal flow (screens are fixed-height scroll containers on screen).
+ */
+@page {
+  size: A4;
+  margin: 14mm 14mm 16mm;
+}
+@media print {
+  :root {
+    color-scheme: light;
+    --color-bg: #ffffff;
+    --color-bg-grouped: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-fill: rgba(55, 53, 47, 0.06);
+    --color-fill-strong: rgba(55, 53, 47, 0.1);
+    --color-separator: rgba(55, 53, 47, 0.2);
+    --color-text: #1f1e1b;
+    --color-text-secondary: #55544f;
+    --color-text-tertiary: #6b6a65;
+    --color-positive: #1f7a4d;
+    --color-negative: #c4372d;
+    --chart-income: #2563eb;
+    --chart-expense: #d9730d;
+  }
+  html,
+  body,
+  #root,
+  [data-print-flow] {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: static !important;
+    animation: none !important;
+    transition: none !important;
+    padding-bottom: 0 !important;
+  }
+  html,
+  body {
+    background: #fff;
+    font-size: 10.5pt;
+  }
+  nav,
+  [data-noprint] {
+    display: none !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

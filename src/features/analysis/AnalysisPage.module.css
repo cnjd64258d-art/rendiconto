@@ -1,0 +1,192 @@
+.controls {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0 var(--gutter) var(--space-4);
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.stepperLabel {
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.custom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+.custom label {
+  display: grid;
+  gap: 4px;
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}
+.custom input {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: var(--hairline) solid var(--color-separator);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.review {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 var(--gutter) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: var(--hairline) solid var(--color-separator);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+}
+.review:active {
+  background: var(--color-fill);
+}
+.reviewEmoji {
+  font-size: 1.6rem;
+}
+.reviewText {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.reviewTitle {
+  font-weight: var(--weight-semibold);
+}
+.reviewSub {
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}
+.chevron {
+  color: var(--color-text-tertiary);
+  font-size: 1.4rem;
+}
+.kpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin: 0 var(--gutter) var(--space-4);
+}
+.kpi {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: var(--hairline) solid var(--color-separator);
+  background: var(--color-surface);
+}
+.kpiLabel {
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}
+.kpiValue {
+  margin-top: 2px;
+  font-size: var(--text-title3);
+  font-weight: var(--weight-light);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.positive {
+  color: var(--color-positive);
+}
+.negativeText {
+  color: var(--color-negative);
+}
+.card {
+  margin: 0 var(--gutter) var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: var(--hairline) solid var(--color-separator);
+  background: var(--color-surface);
+}
+.cardTitle {
+  margin: 0;
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-semibold);
+}
+.cardHint {
+  margin: 2px 0 var(--space-1);
+  font-size: var(--text-footnote);
+  color: var(--color-text-tertiary);
+}
+.insights {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.insight {
+  display: grid;
+  grid-template-columns: 1.5em 1fr;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-fill);
+  font-size: var(--text-subhead);
+  line-height: 1.4;
+}
+.insightWarning {
+  background: var(--color-warning-soft);
+}
+.insightPositive {
+  background: color-mix(in srgb, var(--color-positive) 12%, transparent);
+}
+.yoyScroll {
+  overflow-x: auto;
+  margin: 0 calc(-1 * var(--space-4));
+  padding: 0 var(--space-4);
+}
+.yoy {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-footnote);
+  font-variant-numeric: tabular-nums;
+}
+.yoy th,
+.yoy td {
+  padding: var(--space-2) 4px;
+  border-bottom: var(--hairline) solid var(--color-separator);
+  text-align: right;
+  white-space: nowrap;
+}
+.yoy thead th {
+  color: var(--color-text-secondary);
+  font-weight: var(--weight-medium);
+}
+.yoy th[scope='row'],
+.yoy thead th:first-child {
+  text-align: left;
+  font-weight: var(--weight-regular);
+  max-width: 9em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.yoyTotal th,
+.yoyTotal td {
+  font-weight: var(--weight-semibold) !important;
+  border-bottom: 0;
+}
+.deltaMain {
+  display: block;
+}
+.deltaSub {
+  display: block;
+  font-size: var(--text-caption);
+  color: var(--color-text-tertiary);
+}
+.up .deltaMain {
+  color: var(--color-negative);
+}
+.down .deltaMain {
+  color: var(--color-positive);
+}
+.footnote {
+  margin: 0 var(--gutter) var(--space-6);
+  font-size: var(--text-footnote);
+  color: var(--color-text-tertiary);
+}

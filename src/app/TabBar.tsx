@@ -20,7 +20,7 @@ export function TabBar({ route, onAdd, budgetAlert = null }: TabBarProps) {
           <PlusIcon />
         </button>
       </div>
-      <Tab href="#/analisi" label="Analisi" active={route === 'analysis'} icon={(a) => <ChartIcon filled={a} />} />
+      <Tab href="#/analisi" label="Analisi" active={route === 'analysis' || route === 'review'} icon={(a) => <ChartIcon filled={a} />} />
       <Tab
         href="#/budget"
         label="Budget"

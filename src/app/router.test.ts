@@ -17,7 +17,12 @@ describe('parseRoute', () => {
     ['#/impostazioni/metodi', 'methods'],
     ['#/impostazioni/ricorrenti', 'recurring'],
     ['#/boh', 'notFound'],
+    ['#/analisi/anno/20x6', 'notFound'],
   ])('%j → %s', (hash, name) => {
     expect(parseRoute(hash).name).toBe(name);
+  });
+
+  it('reads the year of "Tira una linea"', () => {
+    expect(parseRoute('#/analisi/anno/2025')).toEqual({ name: 'review', year: 2025 });
   });
 });

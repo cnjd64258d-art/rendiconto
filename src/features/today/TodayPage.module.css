@@ -155,3 +155,31 @@
 .recent {
   margin-top: var(--space-2);
 }
+
+.reviewCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 var(--gutter) var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: var(--hairline) solid var(--color-separator);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+}
+.reviewCard > span:first-child {
+  font-size: 1.5rem;
+}
+.reviewCard > span:nth-child(2) {
+  display: grid;
+  flex: 1;
+}
+.reviewSub {
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}
+.reviewChevron {
+  color: var(--color-text-tertiary);
+  font-size: 1.4rem;
+}
