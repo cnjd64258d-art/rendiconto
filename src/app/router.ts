@@ -16,6 +16,8 @@ export type Route =
   | { name: 'categories' }
   | { name: 'methods' }
   | { name: 'recurring' }
+  | { name: 'plans' }
+  | { name: 'shared' }
   | { name: 'design' }
   | { name: 'notFound'; path: string };
 
@@ -44,6 +46,10 @@ export function parseRoute(hash: string): Route {
       return { name: 'methods' };
     case '/impostazioni/ricorrenti':
       return { name: 'recurring' };
+    case '/impostazioni/rate':
+      return { name: 'plans' };
+    case '/impostazioni/condivise':
+      return { name: 'shared' };
     case '/design':
       return { name: 'design' };
     default:

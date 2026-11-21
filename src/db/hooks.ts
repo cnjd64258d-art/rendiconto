@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { compareTransactionsDesc } from '../core/transactions';
-import type { Budget, Category, CategoryGroup, PaymentMethod, RecurringRule, SavedView, SavingsGoal, Transaction } from '../core/types';
+import type { Budget, Category, CategoryGroup, InstallmentPlan, PaymentMethod, Person, RecurringRule, SavedView, SavingsGoal, Settlement, Transaction } from '../core/types';
 import { db } from './db';
 
 /** All transactions, newest first. `undefined` while loading. */
@@ -44,4 +44,16 @@ export function useSavingsGoal(year: number): SavingsGoal | null | undefined {
 /** Free notes of a year ("Tira una linea"); '' when none, undefined while loading. */
 export function useYearNote(year: number): string | undefined {
   return useLiveQuery(async () => (await db.yearNotes.get(year))?.text ?? '', [year]);
+}
+
+export function usePeople(): Person[] | undefined {
+  return useLiveQuery(async () => (await db.people.toArray()).sort((a, b) => a.name.localeCompare(b.name, 'it')), []);
+}
+
+export function useInstallmentPlans(): InstallmentPlan[] | undefined {
+  return useLiveQuery(() => db.installmentPlans.toArray(), []);
+}
+
+export function useSettlements(): Settlement[] | undefined {
+  return useLiveQuery(() => db.settlements.toArray(), []);
 }

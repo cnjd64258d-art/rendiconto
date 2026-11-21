@@ -9,7 +9,9 @@ import { kindResolver, upcoming } from '../../core/recurring';
 import { groupByDay } from '../../core/transactions';
 import { suggestedReviewYear } from '../../core/yearReview';
 import type { Transaction } from '../../core/types';
-import { useBudgets, useCategories, useCategoryGroups, useMeta, useRecurringRules, useTransactions } from '../../db/hooks';
+import { balances } from '../../core/split';
+import { useBudgets, useCategories, useCategoryGroups, useMeta, usePeople, useRecurringRules, useSettlements, useTransactions } from '../../db/hooks';
+import { balanceText } from '../settings/SharedPage';
 import { confirmPending } from '../../db/recurring';
 import { META_LAST_BACKUP } from '../../db/repo';
 import { AnimatedAmount, Banner, Button, EmptyState, IconButton, ListGroup, Page, ProgressBar, cx, showToast } from '../../ui/components';
@@ -28,6 +30,8 @@ export function TodayPage() {
   const categories = useCategories();
   const groups = useCategoryGroups();
   const lookups = useLookups();
+  const people = usePeople();
+  const settlements = useSettlements();
   const lastBackup = useMeta<string>(META_LAST_BACKUP);
   const todayISO = today();
 
@@ -52,6 +56,10 @@ export function TodayPage() {
   const pending = useMemo(
     () => (transactions ?? []).filter((t) => t.status === 'pending' && t.date <= todayISO).sort((a, b) => (a.date < b.date ? -1 : 1)),
     [transactions, todayISO],
+  );
+  const open = useMemo(
+    () => (people && settlements ? balances(transactions ?? [], settlements, people).filter((b) => b.netCents !== 0) : []),
+    [transactions, settlements, people],
   );
   const next = useMemo(() => upcoming(rules ?? [], todayISO, UPCOMING_DAYS, kindOf), [rules, todayISO, kindOf]);
 
@@ -185,6 +193,27 @@ export function TodayPage() {
         </ListGroup>
       )}
 
+      {people && open.length > 0 && (
+        <ListGroup header="Conti in sospeso">
+          {open.slice(0, 5).map((b) => (
+            <li key={b.personId} className={styles.upcoming}>
+              <a className={styles.upLink} href="#/impostazioni/condivise">
+                <span className={styles.upEmoji} aria-hidden="true">
+                  👥
+                </span>
+                <span className={styles.upText}>
+                  <span className={styles.upTitle}>{balanceText(people.find((p) => p.id === b.personId)?.name ?? '?', b.netCents)}</span>
+                  <span className={styles.upMeta}>
+                    {pluralOpen(b.items.filter((i) => i.status !== 'settled').length)}
+                  </span>
+                </span>
+                <span className={cx(styles.upAmount, b.netCents > 0 && styles.positive)}>{formatCents(Math.abs(b.netCents))}</span>
+              </a>
+            </li>
+          ))}
+        </ListGroup>
+      )}
+
       {lookups && recent.length > 0 && (
         <section aria-label="Ultimi 7 giorni" className={styles.recent}>
           {recent.map((group) => (
@@ -269,4 +298,8 @@ function PendingList({ items, lookups }: { items: Transaction[]; lookups: Lookup
       })}
     </ListGroup>
   );
+}
+
+function pluralOpen(n: number): string {
+  return n === 1 ? '1 spesa da saldare' : `${n} spese da saldare`;
 }

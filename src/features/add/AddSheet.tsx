@@ -11,10 +11,15 @@ import {
   suggestTitles,
   type TitleSuggestion,
 } from '../../core/suggest';
+import { applyExtras, EDITOR_LINKS } from '../../core/entry';
+import { installmentTitle, planProgress, validatePlan, type PlanProgress } from '../../core/installments';
+import { draftFromSplit, EMPTY_SPLIT, type SplitDraft } from '../../core/split';
 import { draftFromTransaction, validateDraft, type DraftField, type TransactionDraft } from '../../core/transactions';
-import type { Category, CategoryGroup, PaymentMethod, Transaction, TransactionKind } from '../../core/types';
-import { useCategories, useCategoryGroups, usePaymentMethods, useTransactions } from '../../db/hooks';
+import type { Category, CategoryGroup, Id, InstallmentPlan, PaymentMethod, Person, Transaction, TransactionKind } from '../../core/types';
+import { useCategories, useCategoryGroups, useInstallmentPlans, usePaymentMethods, usePeople, useTransactions } from '../../db/hooks';
 import { addTransaction, deleteTransaction, restoreTransaction, updateTransaction } from '../../db/repo';
+import { savePlan } from '../../db/shared';
+import { InstallmentPicker, SplitEditor, type NewPlanDraft } from './Extras';
 import { AmountInput, Button, Chip, Chips, SegmentedControl, Sheet, showToast } from '../../ui/components';
 import styles from './AddSheet.module.css';
 
@@ -37,7 +42,10 @@ export function AddSheet() {
   const categories = useCategories();
   const groups = useCategoryGroups();
   const methods = usePaymentMethods();
-  const ready = transactions !== undefined && categories !== undefined && groups !== undefined && methods !== undefined;
+  const people = usePeople();
+  const plans = useInstallmentPlans();
+  const ready =
+    transactions !== undefined && categories !== undefined && groups !== undefined && methods !== undefined && people !== undefined && plans !== undefined;
   const kindLabel = editor.editing ? TITLES[editor.editing.kind][1] : 'Nuova transazione';
 
   return (
@@ -50,6 +58,9 @@ export function AddSheet() {
           categories={categories}
           groups={groups}
           methods={methods}
+          people={people}
+          plans={plans}
+          presetPlanId={editor.planId}
         />
       )}
     </Sheet>
@@ -62,17 +73,38 @@ interface FormProps {
   categories: Category[];
   groups: CategoryGroup[];
   methods: PaymentMethod[];
+  people: Person[];
+  plans: InstallmentPlan[];
+  presetPlanId?: string | undefined;
 }
 
-function TransactionForm({ editing, transactions, categories, groups, methods }: FormProps) {
+function TransactionForm({ editing, transactions, categories, groups, methods, people, plans, presetPlanId }: FormProps) {
   const history = useMemo(() => buildHistory(transactions), [transactions]);
   const activeMethods = useMemo(() => methods.filter((m) => !m.archived || m.id === editing?.paymentMethodId), [methods, editing]);
   const fallbackMethod = activeMethods[0]?.id ?? null;
 
+  // "Registra la prossima rata" from the Rate screen: start from the plan (computed once, at open).
+  const [preset] = useState(() => {
+    const plan = presetPlanId && !editing ? plans.find((p) => p.id === presetPlanId) : undefined;
+    return plan ? planProgress(plan, transactions) : undefined;
+  });
   const [draft, setDraft] = useState<TransactionDraft>(() =>
     editing
       ? draftFromTransaction(editing)
-      : {
+      : preset
+        ? {
+            kind: 'expense',
+            amount: preset.nextAmountCents > 0 ? centsToInput(preset.nextAmountCents) : '',
+            title: installmentTitle(preset.plan, preset.nextIndex),
+            categoryId: preset.plan.categoryId,
+            paymentMethodId: preset.plan.paymentMethodId,
+            toPaymentMethodId: null,
+            date: today(),
+            accrualMonth: preset.plan.accrualMonth && preset.plan.accrualMonth !== today().slice(0, 7) ? preset.plan.accrualMonth : '',
+            notes: '',
+            tags: '',
+          }
+        : {
           kind: 'expense',
           amount: '',
           title: '',
@@ -85,12 +117,47 @@ function TransactionForm({ editing, transactions, categories, groups, methods }:
           tags: '',
         },
   );
-  const [touched, setTouched] = useState({ category: editing !== null, method: editing !== null });
+  const [touched, setTouched] = useState({ category: editing !== null || preset !== undefined, method: editing !== null || preset !== undefined });
   const [errors, setErrors] = useState<Partial<Record<DraftField, string>>>({});
   const [titleFocused, setTitleFocused] = useState(false);
   const [advanced, setAdvanced] = useState(
-    editing !== null && (editing.notes !== '' || editing.tags.length > 0 || editing.accrualMonth !== editing.date.slice(0, 7)),
+    preset !== undefined ||
+    (editing !== null &&
+      (editing.notes !== '' ||
+        editing.tags.length > 0 ||
+        editing.accrualMonth !== editing.date.slice(0, 7) ||
+        editing.split !== undefined ||
+        editing.installmentPlanId !== undefined)),
   );
+  const [split, setSplit] = useState<SplitDraft>(() => draftFromSplit(editing?.split));
+  const [link, setLink] = useState<{ planId: Id; index: number } | null>(() =>
+    editing?.installmentPlanId
+      ? { planId: editing.installmentPlanId, index: editing.installmentIndex ?? 1 }
+      : preset
+        ? { planId: preset.plan.id, index: preset.nextIndex }
+        : null,
+  );
+  const [newPlan, setNewPlan] = useState<NewPlanDraft | null>(null);
+  const progress = useMemo(() => plans.map((p) => planProgress(p, transactions)), [plans, transactions]);
+  const openPlans = useMemo(() => progress.filter((p) => p.open), [progress]);
+  const editingPlan = editing?.installmentPlanId ? progress.find((p) => p.plan.id === editing.installmentPlanId) : undefined;
+
+  const pickPlan = (p: PlanProgress | null) => {
+    setNewPlan(null);
+    if (!p) return setLink(null);
+    const keepIndex = editing?.installmentPlanId === p.plan.id ? (editing.installmentIndex ?? p.nextIndex) : p.nextIndex;
+    setLink({ planId: p.plan.id, index: keepIndex });
+    if (editing?.installmentPlanId === p.plan.id) return;
+    // A new instalment takes its plan's details (decision 1A: the plan's accrual month).
+    update({
+      title: draft.title || installmentTitle(p.plan, keepIndex),
+      amount: draft.amount || (p.nextAmountCents > 0 ? centsToInput(p.nextAmountCents) : ''),
+      categoryId: p.plan.categoryId,
+      paymentMethodId: p.plan.paymentMethodId,
+      accrualMonth: p.plan.accrualMonth ?? draft.accrualMonth,
+    });
+    setTouched({ category: true, method: true });
+  };
   const [saving, setSaving] = useState(false);
   const amountRef = useRef<HTMLInputElement>(null);
 
@@ -154,12 +221,39 @@ function TransactionForm({ editing, transactions, categories, groups, methods }:
       if (result.errors.amount) amountRef.current?.focus();
       return;
     }
+    const plan =
+      newPlan && draft.kind === 'expense'
+        ? validatePlan({
+            title: result.value.title,
+            total: newPlan.total,
+            count: newPlan.count,
+            accrualMonth: result.value.accrualMonth,
+            categoryId: result.value.categoryId ?? null,
+            paymentMethodId: result.value.paymentMethodId,
+            notes: '',
+          })
+        : null;
+    if (plan && !plan.ok) {
+      showToast(plan.error, { icon: 'none' });
+      return;
+    }
+    const extras = applyExtras(result.value, { split, installment: plan ? null : link });
+    if (!extras.ok) {
+      showToast(extras.error, { icon: 'none' });
+      return;
+    }
     // Keep the keyboard up for the next entry: focus inside the tap gesture.
     if (another) amountRef.current?.focus();
     setSaving(true);
     try {
-      if (editing) await updateTransaction(editing.id, result.value);
-      else await addTransaction(result.value);
+      const value = extras.value;
+      if (plan?.ok) {
+        const created = await savePlan(plan.value);
+        value.installmentPlanId = created.id;
+        value.installmentIndex = 1;
+      }
+      if (editing) await updateTransaction(editing.id, value, undefined, EDITOR_LINKS);
+      else await addTransaction(value);
     } finally {
       setSaving(false);
     }
@@ -168,6 +262,9 @@ function TransactionForm({ editing, transactions, categories, groups, methods }:
     if (another) {
       setDraft((d) => ({ ...d, amount: '', title: '', notes: '', tags: '', categoryId: null, accrualMonth: '' }));
       setTouched({ category: false, method: false });
+      setSplit(EMPTY_SPLIT);
+      setLink(null);
+      setNewPlan(null);
     } else {
       closeEditor();
     }
@@ -314,6 +411,22 @@ function TransactionForm({ editing, transactions, categories, groups, methods }:
               <div className={styles.hint}>Separati da virgola.</div>
             </div>
           </label>
+          {draft.kind === 'expense' && (
+            <>
+              <InstallmentPicker
+                plans={openPlans}
+                value={link}
+                newPlan={newPlan}
+                editingPlan={editingPlan}
+                onPick={pickPlan}
+                onNewPlan={(d) => {
+                  setNewPlan(d);
+                  if (d) setLink(null);
+                }}
+              />
+              <SplitEditor amount={draft.amount} people={people} value={split} onChange={setSplit} />
+            </>
+          )}
         </div>
       )}
 

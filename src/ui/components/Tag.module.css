@@ -20,6 +20,7 @@
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--gutter);
   scrollbar-width: none;
   padding: var(--space-1) var(--gutter);
   margin: 0;

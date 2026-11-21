@@ -11,6 +11,8 @@ import { ImportPage } from '../features/settings/ImportPage';
 import { CategoriesPage } from '../features/settings/CategoriesPage';
 import { MethodsPage } from '../features/settings/MethodsPage';
 import { RecurringPage } from '../features/settings/RecurringPage';
+import { PlansPage } from '../features/settings/PlansPage';
+import { SharedPage } from '../features/settings/SharedPage';
 import { generateRecurring } from '../db/recurring';
 import { openEditor, openNewTransaction } from './editor';
 import styles from './App.module.css';
@@ -90,6 +92,10 @@ function Screen({ route }: { route: Route }) {
       return <MethodsPage />;
     case 'recurring':
       return <RecurringPage />;
+    case 'plans':
+      return <PlansPage />;
+    case 'shared':
+      return <SharedPage />;
     case 'design':
       return (
         <Suspense fallback={null}>

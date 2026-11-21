@@ -138,6 +138,22 @@ tests/fixtures synthetic CSVs only
 - Charts are hand-made SVG (`features/analysis/Charts.tsx`): paired income/expense bars, cumulative line,
   sorted horizontal bars; colours `--chart-income` / `--chart-expense` (checked for colour-blind separation).
 
+## Implementation notes (M8)
+- Split (`core/split.ts`, pure): `buildSplit(total, draft)` gives `split { totalCents, myShareCents, paidBy, shares[] }`;
+  equal mode puts the rounding remainder on the others, "mine" mode takes my share as typed. Only my share counts as
+  an expense (`effectiveCents`). If someone else paid, I owe them my share.
+- `balances(transactions, settlements, people)`: net per person (+ they owe me). Settlements (decision 2) close debts
+  and are never income; they are allocated FIFO to the oldest open items (open / partial / settled).
+- Installments (`core/installments.ts`): `planProgress` (paid, remaining, next index/amount, complete). Instalments
+  are expenses with `installmentPlanId` + `installmentIndex` and inherit the plan's accrual month (decision 1).
+  Deleting a plan keeps its expenses and only unlinks them.
+- Quick add advanced area (expenses only): "È una rata di…" (open plan or ＋ Nuovo piano, saved with index 1) and
+  "Spesa condivisa" (people chips with inline ＋ Persona, who paid, equal / my share). `core/entry.ts#applyExtras`
+  writes the links; `updateTransaction(..., EDITOR_LINKS)` removes links that were turned off.
+- Screens: `#/impostazioni/rate` (plans, "Registra la prossima rata" via `openNewInstalment`, link past expenses) and
+  `#/impostazioni/condivise` (people, balances, "Registra rimborso", archive). Today shows "Conti in sospeso".
+- Demo: `demo_person_*`, `demo_plan_madeira`, `demo_shared_*`, `demo_settlement_1`.
+
 ## Data model (agreed plan, Dexie v1 from M2)
 transactions, categoryGroups, categories, paymentMethods, people, recurringRules,
 installmentPlans, settlements, budgets, savingsGoals, savedViews, importBatches, yearNotes, meta.
