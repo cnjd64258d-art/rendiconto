@@ -1,0 +1,121 @@
+.group {
+  margin: 0 var(--gutter) var(--space-6);
+}
+.header {
+  padding: 0 var(--space-4) var(--space-2);
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: var(--hairline) solid var(--color-separator);
+}
+.footer {
+  padding: var(--space-2) var(--space-4) 0;
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}
+.item {
+  position: relative;
+}
+.item + .item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: var(--row-inset, var(--space-4));
+  border-top: var(--hairline) solid var(--color-separator);
+  z-index: 1;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--row-height);
+  padding: var(--space-2) var(--space-4);
+  text-align: left;
+  color: var(--color-text);
+  background: var(--color-surface);
+  transition: background-color var(--duration-fast);
+}
+button.row:active,
+a.row:active {
+  background: var(--color-fill);
+}
+.icon {
+  flex: none;
+  width: 28px;
+  display: grid;
+  place-items: center;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.text {
+  flex: 1;
+  min-width: 0;
+}
+.label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.detail {
+  display: block;
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.value {
+  flex: none;
+  max-width: 55%;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chevron {
+  flex: none;
+  color: var(--color-text-tertiary);
+  margin-right: calc(var(--space-1) * -1);
+}
+.destructive .label {
+  color: var(--color-negative);
+}
+.disabled {
+  opacity: 0.45;
+}
+
+/* Notion-like property row: key → value */
+.property {
+  display: grid;
+  grid-template-columns: minmax(7.5em, 38%) 1fr;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 40px;
+  padding: var(--space-1) 0;
+  font-size: var(--text-subhead);
+}
+.propertyKey {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+}
+.propertyValue {
+  min-width: 0;
+  color: var(--color-text);
+}

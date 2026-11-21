@@ -1,0 +1,57 @@
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: start;
+  height: calc(var(--tabbar-height) + var(--safe-bottom));
+  padding: 0 var(--safe-right) var(--safe-bottom) var(--safe-left);
+  background: color-mix(in srgb, var(--color-bg) 84%, transparent);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: var(--hairline) solid var(--color-separator);
+}
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  height: var(--tabbar-height);
+  color: var(--color-text-tertiary);
+  font-size: 0.6rem;
+  font-weight: var(--weight-medium);
+  transition: color var(--duration-fast);
+}
+.tab[aria-current='page'] {
+  color: var(--color-text);
+}
+.tab:active svg {
+  transform: scale(0.9);
+}
+.tab svg {
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+.add {
+  display: grid;
+  place-items: center;
+  height: var(--tabbar-height);
+}
+.addButton {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin-top: -14px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  box-shadow: var(--shadow-float);
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+.addButton:active {
+  transform: scale(0.9);
+}

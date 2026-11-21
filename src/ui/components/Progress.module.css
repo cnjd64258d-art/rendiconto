@@ -1,0 +1,42 @@
+.bar {
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-fill-strong);
+  overflow: hidden;
+}
+.fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-text);
+  transform-origin: left center;
+  transition:
+    transform var(--duration-slow) var(--ease-spring),
+    background-color var(--duration-base);
+}
+.thick {
+  height: 8px;
+}
+.warning .fill {
+  background: var(--color-warning);
+}
+.over .fill {
+  background: var(--color-negative);
+}
+.ring {
+  display: block;
+}
+.ringTrack {
+  stroke: var(--color-fill-strong);
+}
+.ringFill {
+  stroke: var(--color-text);
+  transition:
+    stroke-dashoffset var(--duration-slow) var(--ease-spring),
+    stroke var(--duration-base);
+}
+.warning .ringFill {
+  stroke: var(--color-warning);
+}
+.over .ringFill {
+  stroke: var(--color-negative);
+}

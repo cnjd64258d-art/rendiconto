@@ -1,0 +1,35 @@
+.wrap {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.actions {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: flex;
+}
+.action {
+  width: 76px;
+  display: grid;
+  place-items: center;
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-semibold);
+  color: #ffffff;
+  background: #8a8984;
+}
+.action[data-tone='accent'] {
+  background: #2563eb;
+}
+.action[data-tone='destructive'] {
+  background: #d4382c;
+}
+.content {
+  position: relative;
+  background: var(--color-surface);
+  touch-action: pan-y;
+  transform: translateX(var(--swipe-x, 0px));
+  transition: transform var(--duration-base) var(--ease-spring);
+}
+.dragging .content {
+  transition: none;
+}

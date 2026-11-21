@@ -1,0 +1,179 @@
+/*
+ * Rendiconto design tokens. Near-monochrome warm greys, one accent colour.
+ * Category colours are soft Notion-like tints, used only for tags and charts.
+ * Dark mode follows prefers-color-scheme automatically.
+ */
+:root {
+  color-scheme: light dark;
+
+  /* Surfaces */
+  --color-bg: #ffffff;
+  --color-bg-grouped: #f7f6f3;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-thumb: #ffffff;
+  --color-fill: rgba(55, 53, 47, 0.06);
+  --color-fill-strong: rgba(55, 53, 47, 0.1);
+  --color-separator: rgba(55, 53, 47, 0.16);
+  --color-overlay: rgba(15, 15, 14, 0.32);
+
+  /* Text: hierarchy comes from weight and size, these greys only soften. */
+  --color-text: #37352f;
+  --color-text-secondary: #5f5e59;
+  --color-text-tertiary: #767570;
+  --color-text-on-accent: #ffffff;
+
+  /* Accent (single) and semantic */
+  --color-accent: #2563eb;
+  --color-accent-pressed: #1d4fc4;
+  --color-accent-soft: rgba(37, 99, 235, 0.1);
+  --color-positive: #1f7a4d;
+  --color-warning: #a35f00;
+  --color-negative: #c4372d;
+  --color-warning-soft: #fbefd9;
+  --color-negative-soft: #f9e2df;
+
+  /* Category tints: --tag-<name>-bg / --tag-<name>-fg */
+  --tag-gray-bg: #eeedeb;
+  --tag-gray-fg: #55534e;
+  --tag-brown-bg: #f1e6df;
+  --tag-brown-fg: #73503d;
+  --tag-orange-bg: #fbe4d3;
+  --tag-orange-fg: #85461a;
+  --tag-yellow-bg: #f8eecb;
+  --tag-yellow-fg: #6f5510;
+  --tag-green-bg: #ddeee3;
+  --tag-green-fg: #2b6442;
+  --tag-blue-bg: #dceaf6;
+  --tag-blue-fg: #235684;
+  --tag-purple-bg: #eae3f4;
+  --tag-purple-fg: #5b3d85;
+  --tag-pink-bg: #f6e1ea;
+  --tag-pink-fg: #85335b;
+  --tag-red-bg: #f9dedc;
+  --tag-red-fg: #932e28;
+
+  /* Typography: SF Pro via the system stack. */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Helvetica Neue', sans-serif;
+  --font-rounded: ui-rounded, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Type scale in rem, so it follows iOS Dynamic Type (see global.css). */
+  --text-caption: 0.7rem; /* ~12px */
+  --text-footnote: 0.765rem; /* ~13px */
+  --text-subhead: 0.88rem; /* ~15px */
+  --text-body: 1rem; /* ~17px */
+  --text-title3: 1.18rem; /* ~20px */
+  --text-title2: 1.3rem; /* ~22px */
+  --text-title1: 1.65rem; /* ~28px */
+  --text-large-title: 2rem; /* ~34px */
+  --text-hero: 3rem; /* ~51px, main totals */
+
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Spacing (4pt grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --gutter: 16px;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  /* Lines and elevation: hairlines, no heavy shadows. */
+  --hairline: 0.5px;
+  --shadow-sheet: 0 -1px 0 var(--color-separator), 0 -8px 32px rgba(15, 15, 14, 0.08);
+  --shadow-float: 0 4px 16px rgba(15, 15, 14, 0.12), 0 1px 3px rgba(15, 15, 14, 0.08);
+
+  /* Sizes */
+  --tap: 44px;
+  --row-height: 48px;
+  --tabbar-height: 52px;
+  --navbar-height: 44px;
+
+  /* Motion: short, spring-like curves. */
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 160ms;
+  --duration-base: 280ms;
+  --duration-slow: 420ms;
+
+  /* Safe areas */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #000000;
+    --color-bg-grouped: #000000;
+    --color-surface: #161615;
+    --color-surface-raised: #1f1f1e;
+    --color-thumb: #4a4a47;
+    --color-fill: rgba(235, 235, 230, 0.08);
+    --color-fill-strong: rgba(235, 235, 230, 0.14);
+    --color-separator: rgba(235, 235, 230, 0.16);
+    --color-overlay: rgba(0, 0, 0, 0.55);
+
+    --color-text: #ededec;
+    --color-text-secondary: #a8a7a2;
+    --color-text-tertiary: #87867f;
+
+    --color-accent: #4c8dff;
+    --color-accent-pressed: #3b78e6;
+    --color-accent-soft: rgba(76, 141, 255, 0.16);
+    --color-text-on-accent: #000000;
+    --color-positive: #5cc98e;
+    --color-warning: #f0b450;
+    --color-negative: #ff7b70;
+    --color-warning-soft: #3a2c12;
+    --color-negative-soft: #3d1d1a;
+
+    --tag-gray-bg: #2f2f2d;
+    --tag-gray-fg: #cfcec9;
+    --tag-brown-bg: #3a2c24;
+    --tag-brown-fg: #dcbfab;
+    --tag-orange-bg: #43301f;
+    --tag-orange-fg: #f0b582;
+    --tag-yellow-bg: #3d3519;
+    --tag-yellow-fg: #e8cf7a;
+    --tag-green-bg: #1f3528;
+    --tag-green-fg: #9ed3af;
+    --tag-blue-bg: #1c2f40;
+    --tag-blue-fg: #9cc6ea;
+    --tag-purple-bg: #30263f;
+    --tag-purple-fg: #c9b3e8;
+    --tag-pink-bg: #3d2430;
+    --tag-pink-fg: #ebb0c9;
+    --tag-red-bg: #43231f;
+    --tag-red-fg: #f0a9a2;
+
+    --shadow-sheet: 0 -1px 0 var(--color-separator);
+    --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+    --duration-slow: 1ms;
+  }
+}
