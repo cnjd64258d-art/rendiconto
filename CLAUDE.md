@@ -1,6 +1,11 @@
-# Rendiconto — project guide
+# Ledgerline — project guide
 
-Personal-finance PWA for iPhone. Data lives only on the device (IndexedDB).
+Personal-finance PWA for iPhone, named **Ledgerline** (renamed from "Rendiconto" after M9). The visible name
+(manifest, Home Screen title, page title, UI text, export file names) is Ledgerline; the repo, the URL
+(`/rendiconto/`), the IndexedDB name (`rendiconto`), the backup format id (`rendiconto-backup`) and the class
+`RendicontoDB` keep the old name so existing data, backups and installs keep working. "Rendiconto YYYY" stays as the
+title of the yearly statement (it is the Italian word for it), and the import note "Importato da Rendiconto" refers
+to the old spreadsheet. Data lives only on the device (IndexedDB).
 The owner works **only from an iPhone**: never ask them to run commands.
 Everything is built, tested and deployed by GitHub Actions; they verify by
 opening https://cnjd64258d-art.github.io/rendiconto/ in Safari / from the Home Screen.

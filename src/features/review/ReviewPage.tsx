@@ -44,8 +44,8 @@ export default function ReviewPage({ year }: { year: number }) {
   const exportCsv = () => {
     // Built synchronously so Web Share still sees the tap.
     const csv = reviewCsv(review, categories, groups);
-    const file = new File([csv], `rendiconto-${year}.csv`, { type: 'text/csv' });
-    void shareOrDownload([file], `Rendiconto ${year}`).then((r) => r === 'downloaded' && showToast('CSV scaricato'));
+    const file = new File([csv], `ledgerline-rendiconto-${year}.csv`, { type: 'text/csv' });
+    void shareOrDownload([file], `Ledgerline · Rendiconto ${year}`).then((r) => r === 'downloaded' && showToast('CSV scaricato'));
   };
 
   return (

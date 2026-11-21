@@ -50,11 +50,11 @@ export function LockScreen() {
   };
 
   return (
-    <div className={styles.screen} role="dialog" aria-modal="true" aria-label="Rendiconto è bloccato">
+    <div className={styles.screen} role="dialog" aria-modal="true" aria-label="Ledgerline è bloccato">
       <PinPad
         length={config.length}
         title="Inserisci il PIN"
-        message="Rendiconto è bloccato"
+        message="Ledgerline è bloccato"
         error={blockedMs > 0 ? blockText(blockedMs) : error}
         errorKey={errorKey}
         disabled={blockedMs > 0}
@@ -81,7 +81,7 @@ export function LockScreen() {
         }}
       >
         Il PIN non si può recuperare: non viene mai salvato in chiaro. Per riaprire l'app devi cancellare tutti i dati
-        di Rendiconto su questo iPhone. Dopo potrai ripristinare un backup da Impostazioni → Backup.
+        di Ledgerline su questo iPhone. Dopo potrai ripristinare un backup da Impostazioni → Backup.
       </ConfirmSheet>
     </div>
   );

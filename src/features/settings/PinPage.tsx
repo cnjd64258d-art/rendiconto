@@ -82,7 +82,7 @@ export function PinPage() {
       </ListGroup>
 
       {config && (
-        <ListGroup header="Blocca di nuovo" footer="Quando torni in Rendiconto dopo questo tempo in background, chiede il PIN. Si blocca sempre alla riapertura.">
+        <ListGroup header="Blocca di nuovo" footer="Quando torni in Ledgerline dopo questo tempo in background, chiede il PIN. Si blocca sempre alla riapertura.">
           {LOCK_AFTER_OPTIONS.map((sec) => (
             <Row
               key={sec}

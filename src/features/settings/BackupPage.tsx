@@ -33,7 +33,7 @@ export function BackupPage() {
 
   const exportNow = async () => {
     if (!files) return;
-    const result = await shareOrDownload(files, 'Backup Rendiconto');
+    const result = await shareOrDownload(files, 'Backup Ledgerline');
     if (result === 'cancelled') return;
     await setMeta(META_LAST_BACKUP, new Date().toISOString());
     showToast(result === 'shared' ? 'Backup esportato' : 'Backup scaricato');

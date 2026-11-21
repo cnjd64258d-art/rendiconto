@@ -75,7 +75,7 @@ export function parseBackup(text: string): ParseResult {
     return { ok: false, error: 'Il file non è un JSON valido.' };
   }
   if (!isRecord(data) || data.format !== BACKUP_FORMAT) {
-    return { ok: false, error: 'Questo file non è un backup di Rendiconto.' };
+    return { ok: false, error: 'Questo file non è un backup di Ledgerline.' };
   }
   const version = data.schemaVersion;
   if (typeof version !== 'number' || !Number.isInteger(version) || version < 1) {
@@ -152,7 +152,7 @@ export function summarizeBackup(backup: BackupFile): BackupSummary {
 
 export function backupFileName(now: Date, ext: 'json' | 'csv'): string {
   const d = now.toISOString().slice(0, 10);
-  return ext === 'json' ? `rendiconto-backup-${d}.json` : `rendiconto-transazioni-${d}.csv`;
+  return ext === 'json' ? `ledgerline-backup-${d}.json` : `ledgerline-transazioni-${d}.csv`;
 }
 
 const DAY = 24 * 60 * 60 * 1000;

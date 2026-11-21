@@ -25,8 +25,8 @@ export default defineConfig({
       pwaAssets: { config: true, overrideManifestIcons: true, injectThemeColor: false },
       manifest: {
         id: base,
-        name: 'Rendiconto',
-        short_name: 'Rendiconto',
+        name: 'Ledgerline',
+        short_name: 'Ledgerline',
         description: 'Le tue finanze di tutti i giorni, solo sul tuo iPhone.',
         lang: 'it-IT',
         dir: 'ltr',
