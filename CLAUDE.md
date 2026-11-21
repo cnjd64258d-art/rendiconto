@@ -174,8 +174,9 @@ tests/fixtures synthetic CSVs only
 - Face ID / Touch ID (after M9): WebAuthn platform passkey "Ledgerline" (`app/biometric.ts`, ES256, UV required),
   verified locally in `core/biometric.ts` (challenge, origin, RP id hash, UP+UV flags, ECDSA signature with the stored
   SPKI). Config in `meta.biometricLock` (a `DEVICE_META_KEYS` entry); only available while a PIN is set, which stays
-  the fallback; removing the PIN removes it. `create`/`get` run straight from a tap (iOS gesture rule); the lock
-  screen also tries once by itself, then shows "Usa Face ID". E2E-checked with Chromium's virtual authenticator.
+  the fallback; removing the PIN removes it. `create`/`get` run straight from a tap: iOS never starts Face ID in a
+  web app without one (owner-verified, no automatic attempt). With Face ID on, the lock screen shows a big
+  "Usa Face ID" button and the PIN keypad only after "Usa il PIN" (owner's choice). E2E-checked with Chromium's virtual authenticator.
 - Icon: `public/logo.svg` / `logo-dark.svg` (three entries, a ruled line, the total). Settings sub-pages have empty states.
 
 ## Data model (agreed plan, Dexie v1 from M2)
