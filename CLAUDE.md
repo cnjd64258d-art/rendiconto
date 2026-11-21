@@ -70,6 +70,16 @@ tests/fixtures synthetic CSVs only
   keywords until the user taps a chip; the payment method follows the category's usual one until tapped.
 - Deleting shows a toast with "Annulla" that puts the row back.
 
+## Implementation notes (M3)
+- CSV import: `core/csv/parse.ts` (RFC-4180-ish, BOM, CRLF, delimiter detection) and `core/csv/import.ts`
+  (`planImport` is pure: mapping, normalisation, aliases, duplicates, totals by accrual year, `checkTotals`).
+  `db/imports.ts` commits a plan as an `importBatch`; "Annulla import" deletes rows by `importBatchId`.
+- Idempotent re-import counts occurrences: the n-th identical row (same date, amount, description) in a file is
+  skipped when the DB already has n rows with that `dedupeKey`. Legit identical rows in one file are kept (warning).
+- Income files (period, amount): `YYYY` → `YYYY-12-31`, accrual `YYYY-12`, note "Importato da Rendiconto".
+- Screen: `#/impostazioni/import`. Acceptance test: `tests/import.acceptance.test.ts` with synthetic fixtures
+  (imported via `?raw`, no Node types needed).
+
 ## Data model (agreed plan, Dexie v1 from M2)
 transactions, categoryGroups, categories, paymentMethods, people, recurringRules,
 installmentPlans, settlements, budgets, savingsGoals, savedViews, importBatches, yearNotes, meta.

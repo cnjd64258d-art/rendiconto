@@ -11,6 +11,7 @@ export type Route =
   | { name: 'budget' }
   | { name: 'settings' }
   | { name: 'backup' }
+  | { name: 'import' }
   | { name: 'design' }
   | { name: 'notFound'; path: string };
 
@@ -29,6 +30,8 @@ export function parseRoute(hash: string): Route {
       return { name: 'settings' };
     case '/impostazioni/backup':
       return { name: 'backup' };
+    case '/impostazioni/import':
+      return { name: 'import' };
     case '/design':
       return { name: 'design' };
     default:
