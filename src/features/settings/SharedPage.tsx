@@ -8,7 +8,7 @@ import type { Person } from '../../core/types';
 import { usePaymentMethods, usePeople, useSettlements, useTransactions } from '../../db/hooks';
 import { newId } from '../../db/repo';
 import { deleteSettlement, restoreSettlement, savePerson, saveSettlement, setPersonArchived } from '../../db/shared';
-import { BackLink, Button, Chip, Chips, ListGroup, Page, Row, SegmentedControl, Sheet, cx, primeKeyboard, showToast } from '../../ui/components';
+import { BackLink, Button, Chip, Chips, EmptyState, ListGroup, Page, Row, SegmentedControl, Sheet, cx, primeKeyboard, showToast } from '../../ui/components';
 import { EditSheet } from './EditSheet';
 import styles from './Form.module.css';
 import own from './Shared.module.css';
@@ -90,16 +90,22 @@ export function SharedPage() {
 
   return (
     <Page title="Spese condivise" grouped leading={back}>
-      <section className={own.summary} aria-label="Saldo complessivo">
-        <div>
-          <div className={own.summaryLabel}>Ti devono</div>
-          <div className={cx(own.summaryValue, own.positive)}>{formatCents(totals.owedToMeCents)}</div>
-        </div>
-        <div>
-          <div className={own.summaryLabel}>Devi</div>
-          <div className={cx(own.summaryValue, totals.iOweCents > 0 && own.negative)}>{formatCents(totals.iOweCents)}</div>
-        </div>
-      </section>
+      {people.length === 0 ? (
+        <EmptyState emoji="🤝" title="Nessuna spesa condivisa">
+          Quando dividi una cena o la benzina, segna la spesa come condivisa: qui vedi chi ti deve cosa.
+        </EmptyState>
+      ) : (
+        <section className={own.summary} aria-label="Saldo complessivo">
+          <div>
+            <div className={own.summaryLabel}>Ti devono</div>
+            <div className={cx(own.summaryValue, own.positive)}>{formatCents(totals.owedToMeCents)}</div>
+          </div>
+          <div>
+            <div className={own.summaryLabel}>Devi</div>
+            <div className={cx(own.summaryValue, totals.iOweCents > 0 && own.negative)}>{formatCents(totals.iOweCents)}</div>
+          </div>
+        </section>
+      )}
 
       <ListGroup
         header="Persone"

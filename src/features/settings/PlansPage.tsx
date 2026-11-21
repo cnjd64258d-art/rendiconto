@@ -7,7 +7,7 @@ import { sanitizeAmountTyping } from '../../core/money';
 import type { InstallmentPlan } from '../../core/types';
 import { useCategories, useCategoryGroups, useInstallmentPlans, usePaymentMethods, useTransactions } from '../../db/hooks';
 import { deletePlan, linkInstalment, savePlan, setPlanClosed, unlinkInstalment } from '../../db/shared';
-import { BackLink, Button, Chip, Chips, ConfirmSheet, ListGroup, Page, ProgressBar, Row, Sheet, showToast } from '../../ui/components';
+import { BackLink, Button, Chip, Chips, ConfirmSheet, ListGroup, Page, ProgressBar, Row, Sheet, showToast, EmptyState } from '../../ui/components';
 import { EditSheet } from './EditSheet';
 import styles from './Form.module.css';
 import own from './Shared.module.css';
@@ -74,6 +74,11 @@ export function PlansPage() {
 
   return (
     <Page title="Piani a rate" grouped leading={back}>
+      {plans.length === 0 && (
+        <EmptyState emoji="🧾" title="Nessun piano a rate">
+          Hai comprato qualcosa a rate? Crea il piano e vedi sempre quanto hai pagato e quanto manca.
+        </EmptyState>
+      )}
       <ListGroup footer="Ogni rata è una spesa vera (conta quando la paghi) e prende il mese di competenza del piano: le rate del volo di Pasqua vanno ad aprile.">
         {open.map(row)}
         <Row icon="＋" label={<span style={{ color: 'var(--color-accent)' }}>Nuovo piano a rate</span>} onClick={startNew} />

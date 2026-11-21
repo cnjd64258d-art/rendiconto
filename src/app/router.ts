@@ -18,6 +18,7 @@ export type Route =
   | { name: 'recurring' }
   | { name: 'plans' }
   | { name: 'shared' }
+  | { name: 'pin' }
   | { name: 'design' }
   | { name: 'notFound'; path: string };
 
@@ -50,6 +51,8 @@ export function parseRoute(hash: string): Route {
       return { name: 'plans' };
     case '/impostazioni/condivise':
       return { name: 'shared' };
+    case '/impostazioni/pin':
+      return { name: 'pin' };
     case '/design':
       return { name: 'design' };
     default:

@@ -1,0 +1,104 @@
+.pad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+}
+.head {
+  text-align: center;
+}
+.title {
+  margin: 0;
+  font-size: var(--text-title3);
+  font-weight: var(--weight-semibold);
+}
+.message {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-subhead);
+  color: var(--color-text-secondary);
+}
+.dots {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+}
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-text);
+  transition: background-color 120ms ease;
+}
+.filled {
+  background: var(--color-text);
+}
+.error {
+  min-height: 1.4em;
+  margin: 0;
+  font-size: var(--text-footnote);
+  color: var(--color-negative);
+  text-align: center;
+}
+.keys {
+  display: grid;
+  grid-template-columns: repeat(3, 76px);
+  gap: var(--space-4) var(--space-6);
+  justify-content: center;
+}
+.key {
+  display: inline-grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-fill);
+  color: var(--color-text);
+  font-family: var(--font-rounded);
+  font-size: 1.9rem;
+  font-weight: var(--weight-regular);
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+.key:active:not(:disabled) {
+  background: var(--color-fill-strong);
+  transform: scale(0.94);
+}
+.key:disabled {
+  opacity: 0.4;
+}
+.plain {
+  background: transparent;
+  font-size: 1.5rem;
+}
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.shake {
+  animation: shake 400ms ease;
+}
+.fade {
+  animation: fade 400ms ease;
+}
+@keyframes shake {
+  20%, 60% { transform: translateX(-10px); }
+  40%, 80% { transform: translateX(10px); }
+}
+@keyframes fade {
+  50% { opacity: 0.2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .key,
+  .dot {
+    transition: none;
+  }
+  .key:active:not(:disabled) {
+    transform: none;
+  }
+}

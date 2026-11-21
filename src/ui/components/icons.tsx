@@ -80,3 +80,12 @@ export function GearIcon() {
     </svg>
   );
 }
+
+export function DeleteBackIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 5h10a2 2 0 012 2v10a2 2 0 01-2 2H9l-6-7 6-7z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M11.5 9.5l5 5M16.5 9.5l-5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}

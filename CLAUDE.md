@@ -154,6 +154,20 @@ tests/fixtures synthetic CSVs only
   `#/impostazioni/condivise` (people, balances, "Registra rimborso", archive). Today shows "Conti in sospeso".
 - Demo: `demo_person_*`, `demo_plan_madeira`, `demo_shared_*`, `demo_settlement_1`.
 
+## Implementation notes (M9)
+- PIN (decision 6, `core/pin.ts`): PBKDF2-SHA256 (210k iterations, 16-byte salt) via Web Crypto, 4 or 6 digits,
+  stored in `meta.pinLock`; failures in `meta.pinAttempts` (after 5: 30 s, doubling, max 15 min). `DEVICE_META_KEYS`
+  never go into a backup and survive restore and "Cancella tutto". "Hai dimenticato il PIN?" erases everything
+  (`clearAllData(db, false)`), then a backup can be restored.
+- Lock (`app/lock.ts` store + `app/LockScreen.tsx`): status `checking` → `locked`/`open`; the app is `inert` behind an
+  opaque cover (no fade-in, content must never show). Locks at launch and on return after `lockAfterSec`
+  (Subito / 1 / 5 / 15 min; "Subito" also locks on hide for the app-switcher snapshot). `PinPad` is the shared keypad.
+  Settings screen `#/impostazioni/pin`.
+- Accessibility: text tokens ≥ 4.5:1 on every background (tertiary darkened), tap targets ≥ 44px (pseudo-element hit
+  areas on compact pills), Dynamic Type via `font: -apple-system-body` on `html`. Motion: global reduced-motion rule
+  plus duration tokens at 1ms; progress bars grow on open, screens rise slightly.
+- Icon: `public/logo.svg` / `logo-dark.svg` (three entries, a ruled line, the total). Settings sub-pages have empty states.
+
 ## Data model (agreed plan, Dexie v1 from M2)
 transactions, categoryGroups, categories, paymentMethods, people, recurringRules,
 installmentPlans, settlements, budgets, savingsGoals, savedViews, importBatches, yearNotes, meta.
