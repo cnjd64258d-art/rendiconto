@@ -1,0 +1,28 @@
+.kind {
+  padding: 0 var(--gutter) var(--space-2);
+}
+.field {
+  margin: 0 var(--gutter) var(--space-3);
+}
+.text {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  border: var(--hairline) solid var(--color-separator);
+  background: var(--color-fill);
+  outline: none;
+}
+.text:focus {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+}
+.note {
+  margin: var(--space-4) var(--gutter) 0;
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+.footer {
+  padding: var(--space-4) var(--gutter) 0;
+}

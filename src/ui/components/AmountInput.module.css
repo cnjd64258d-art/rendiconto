@@ -1,0 +1,37 @@
+.wrap {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--gutter) var(--space-4);
+}
+.input {
+  width: auto;
+  min-width: 2ch;
+  max-width: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  text-align: center;
+  font-size: max(16px, var(--text-hero));
+  font-weight: var(--weight-light);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  caret-color: var(--color-accent);
+  color: var(--color-text);
+  padding: 0;
+}
+.input:focus-visible {
+  outline: none;
+}
+.input::placeholder {
+  color: var(--color-text-tertiary);
+}
+.currency {
+  font-size: var(--text-title1);
+  font-weight: var(--weight-light);
+  color: var(--color-text-secondary);
+}
+.invalid .input {
+  color: var(--color-negative);
+}
