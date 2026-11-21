@@ -106,6 +106,22 @@ tests/fixtures synthetic CSVs only
   pins its header under the nav bar and its first column, and syncs header scroll in JS. Board caps 60 cards
   per column. Calendar heatmap is by payment date, intensity vs the month's 90th-percentile day.
 
+## Implementation notes (M6)
+- Budgets (`core/budget.ts`, pure): a `budgets` row applies from `validFrom` until a newer row for the same target;
+  a 0 limit row means "removed from that month". `planBudgetWrite` keeps history: an edit updates the row that
+  starts in the edited month, otherwise adds a row from that month (past months never change).
+- Spent = confirmed expenses (my share) by accrual month. A group budget covers all its categories and replaces
+  their own budgets in the totals (category lines still show, marked "Inclusa nella macro-voce").
+- Rollover: unspent (limit + carry − spent, never negative) moves to the next month when the next month's row has
+  rollover on; the chain starts at the target's first row and breaks on a month without rollover or budget.
+- Status: warning ≥ 80%, over ≥ 100% (`budgetStatus`). Today shows a banner (`alertSummary`), the Budget tab a dot
+  (`features/budget/useBudgetAlert.ts`, reads only months since the oldest budget).
+- Today/"al giorno" (decision 3) works on the budgeted categories only: budget available − their spent − their
+  fixed costs still due. With no budgets the hero shows spent only.
+- Savings goal (`savingsGoals`, one row per year): saved = confirmed income − expenses accrued to the year;
+  "servono X al mese" = missing ÷ months left (current included), "in linea" vs a steady pace to last month.
+- Demo data adds `demo_budget_*` rows only for targets without a real budget; removing demo deletes them.
+
 ## Data model (agreed plan, Dexie v1 from M2)
 transactions, categoryGroups, categories, paymentMethods, people, recurringRules,
 installmentPlans, settlements, budgets, savingsGoals, savedViews, importBatches, yearNotes, meta.

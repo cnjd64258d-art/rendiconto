@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import { AddSheet } from '../features/add/AddSheet';
 import { AnalysisPage } from '../features/analysis/AnalysisPage';
 import { BudgetPage } from '../features/budget/BudgetPage';
+import { useBudgetAlert } from '../features/budget/useBudgetAlert';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { TodayPage } from '../features/today/TodayPage';
 import { TransactionsPage } from '../features/transactions/TransactionsPage';
@@ -25,6 +26,7 @@ const launchedToAdd = typeof window !== 'undefined' && consumeLaunchFlag('add');
 
 export function App() {
   const route = parseRoute(useHash());
+  const budgetAlert = useBudgetAlert();
 
   useEffect(() => {
     // No tap yet, so iOS won't show the keyboard: the sheet opens, one tap on the amount does the rest.
@@ -46,7 +48,7 @@ export function App() {
       <main className={styles.screen} key={route.name}>
         <Screen route={route} />
       </main>
-      <TabBar route={route.name} onAdd={openNewTransaction} />
+      <TabBar route={route.name} onAdd={openNewTransaction} budgetAlert={budgetAlert} />
       <UpdatePrompt />
       <AddSheet />
       <ToastLayer />

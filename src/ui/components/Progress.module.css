@@ -40,3 +40,6 @@
 .over .ringFill {
   stroke: var(--color-negative);
 }
+.positive .ringFill {
+  stroke: var(--color-positive);
+}
