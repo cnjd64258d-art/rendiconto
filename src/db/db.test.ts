@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { createBackup, parseBackup } from '../core/backup/backup';
 import { validateDraft } from '../core/transactions';
 import { RendicontoDB } from './db';
+import { readBiometric, removePin, saveBiometric } from './pin';
 import {
   addTransaction,
   clearAllData,
@@ -112,6 +113,16 @@ describe('database', () => {
     expect((await target.meta.get('pinLock'))?.value).toEqual({ hash: 'target' });
     await clearAllData(target, false);
     expect(await target.meta.get('pinLock')).toBeUndefined();
+  });
+
+  it('Face ID stays on this iPhone and goes away with the PIN', async () => {
+    const d = fresh();
+    const face = { credentialId: 'id', publicKey: 'pk', rpId: 'example.org' };
+    await saveBiometric(face, d);
+    expect(await readBiometric(d)).toEqual(face);
+    expect(JSON.stringify(createBackup(await readAllTables(d), 'test'))).not.toContain('biometricLock');
+    await removePin(d);
+    expect(await readBiometric(d)).toBeNull();
   });
 });
 

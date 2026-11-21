@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { unlockWithBiometric } from './biometric';
 import { blockText, registerFailure, remainingBlockMs, verifyPin, NO_ATTEMPTS, type PinAttempts } from '../core/pin';
 import { eraseEverythingAndPin, readAttempts, saveAttempts } from '../db/pin';
 import { ConfirmSheet } from '../ui/components';
 import { setPinConfig, unlock, useLock } from './lock';
 import { PinPad } from './PinPad';
+import { FaceIdIcon } from '../ui/components/icons';
 import styles from './LockScreen.module.css';
 
 /** Covers the whole app while it is locked (or while the PIN setting is still being read). */
 export function LockScreen() {
-  const { status, config } = useLock();
+  const { status, config, biometric } = useLock();
   const [attempts, setAttempts] = useState<PinAttempts>(NO_ATTEMPTS);
   const [error, setError] = useState<string | null>(null);
   const [errorKey, setErrorKey] = useState(0);
@@ -19,6 +21,31 @@ export function LockScreen() {
   useEffect(() => {
     if (status === 'locked') void readAttempts().then(setAttempts);
   }, [status]);
+
+  const passed = async () => {
+    setError(null);
+    setAttempts(NO_ATTEMPTS);
+    await saveAttempts(NO_ATTEMPTS);
+    unlock();
+  };
+
+  // Face ID: offered once by itself when the lock appears; iOS may require a tap, then the button does it.
+  const asking = useRef(false);
+  const tryBiometric = async () => {
+    if (!biometric || asking.current) return;
+    asking.current = true;
+    const result = await unlockWithBiometric(biometric);
+    asking.current = false;
+    if (result === 'ok') await passed();
+    else if (result === 'failed') setError('Face ID non riuscito, usa il PIN');
+  };
+  const tryRef = useRef(tryBiometric);
+  useEffect(() => {
+    tryRef.current = tryBiometric;
+  });
+  useEffect(() => {
+    if (status === 'locked' && biometric) void tryRef.current();
+  }, [status, biometric]);
 
   const blockedMs = remainingBlockMs(attempts, now);
   useEffect(() => {
@@ -35,10 +62,7 @@ export function LockScreen() {
     const ok = await verifyPin(pin, config);
     setBusy(false);
     if (ok) {
-      setError(null);
-      setAttempts(NO_ATTEMPTS);
-      void saveAttempts(NO_ATTEMPTS);
-      unlock();
+      await passed();
       return;
     }
     const next = registerFailure(attempts, Date.now());
@@ -61,9 +85,16 @@ export function LockScreen() {
         busy={busy}
         onComplete={(pin) => void check(pin)}
         footer={
-          <button type="button" className={styles.link} onClick={() => setForgot(true)}>
-            Hai dimenticato il PIN?
-          </button>
+          <>
+            {biometric && (
+              <button type="button" className={styles.faceId} onClick={() => void tryBiometric()}>
+                <FaceIdIcon /> Usa Face ID
+              </button>
+            )}
+            <button type="button" className={styles.link} onClick={() => setForgot(true)}>
+              Hai dimenticato il PIN?
+            </button>
+          </>
         }
       />
       <ConfirmSheet
