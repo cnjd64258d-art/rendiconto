@@ -122,6 +122,22 @@ tests/fixtures synthetic CSVs only
   "servono X al mese" = missing ÷ months left (current included), "in linea" vs a steady pace to last month.
 - Demo data adds `demo_budget_*` rows only for targets without a real budget; removing demo deletes them.
 
+## Implementation notes (M7)
+- Analysis (`core/analysis.ts`, pure): `Basis` accrual|payment (decision 5), `Period {from,to}` of months,
+  `inPeriod` (confirmed income/expenses only, my share), `totalsOf`, `breakdown` (macro-voce → categories, sorted),
+  `monthlySeries` (+ cumulative savings), `yearOverYear` (last two years give € and % change; a year in progress
+  compares the same months of each year).
+- Insights (`core/insights.ts`): deterministic rules, Italian text built in core. Spikes compare the last complete
+  month with the 6 before (≥ 25% and ≥ 30 €); habits (spikes, top description, weekday) ignore fixed costs:
+  rows with `recurringRuleId`/`installmentPlanId` or a description equal to a recurring rule's title.
+- "Tira una linea" (`core/yearReview.ts` + `features/review/`, route `#/analisi/anno/YYYY`): statement, previous
+  years, top 10, priciest/cheapest month (cheapest skips the month in progress), daily average over elapsed days,
+  notes in `yearNotes` (autosave), CSV via `reviewCsv` + `shareOrDownload` in the tap, PDF via `window.print()`
+  with the A4 print stylesheet in `ui/global.css` (`[data-noprint]` hides controls). Today shows a card in Dec/Jan.
+- Analysis and Review pages are `React.lazy` chunks. Selection lives in `features/analysis/analysisState.ts`.
+- Charts are hand-made SVG (`features/analysis/Charts.tsx`): paired income/expense bars, cumulative line,
+  sorted horizontal bars; colours `--chart-income` / `--chart-expense` (checked for colour-blind separation).
+
 ## Data model (agreed plan, Dexie v1 from M2)
 transactions, categoryGroups, categories, paymentMethods, people, recurringRules,
 installmentPlans, settlements, budgets, savingsGoals, savedViews, importBatches, yearNotes, meta.

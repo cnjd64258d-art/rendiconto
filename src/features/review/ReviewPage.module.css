@@ -1,0 +1,195 @@
+.doc {
+  margin: 0 var(--gutter) var(--space-6);
+}
+.yearNav {
+  display: inline-flex;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.summary {
+  margin: 0 0 var(--space-5);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: var(--hairline) solid var(--color-separator);
+  background: var(--color-surface);
+}
+.line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: var(--hairline) solid var(--color-separator);
+}
+.line:last-child {
+  border-bottom: 0;
+}
+.line dt {
+  color: var(--color-text-secondary);
+}
+.line dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.lineStrong dt,
+.lineStrong dd {
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+.positive {
+  color: var(--color-positive);
+}
+.negative {
+  color: var(--color-negative);
+}
+.muted {
+  font-weight: var(--weight-regular);
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}
+.section {
+  margin-bottom: var(--space-5);
+  break-inside: avoid;
+}
+.h2 {
+  margin: 0 0 var(--space-2);
+  padding-bottom: var(--space-1);
+  font-size: var(--text-title3);
+  font-weight: var(--weight-semibold);
+  border-bottom: var(--hairline) solid var(--color-separator);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-subhead);
+}
+.table th,
+.table td {
+  padding: 6px 4px;
+  text-align: right;
+  border-bottom: var(--hairline) solid var(--color-separator);
+  white-space: nowrap;
+}
+.table th[scope='row'] {
+  text-align: left;
+  font-weight: var(--weight-regular);
+  white-space: normal;
+}
+.table thead th {
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+}
+.table thead th:first-child {
+  text-align: left;
+}
+.share {
+  width: 3.5em;
+  color: var(--color-text-tertiary);
+  font-size: var(--text-footnote);
+}
+.groupRow th,
+.groupRow td:not(.share) {
+  font-weight: var(--weight-semibold) !important;
+}
+.subRow th {
+  padding-left: var(--space-4) !important;
+  color: var(--color-text-secondary);
+}
+.subRow td:not(.share) {
+  color: var(--color-text-secondary);
+}
+.current th,
+.current td {
+  font-weight: var(--weight-semibold) !important;
+}
+.facts {
+  margin: 0;
+}
+.top {
+  margin: 0;
+  padding-left: 1.6em;
+}
+.top li {
+  padding: 6px 0;
+  border-bottom: var(--hairline) solid var(--color-separator);
+}
+.top li > * {
+  vertical-align: top;
+}
+.top li {
+  display: list-item;
+}
+.topText {
+  display: inline-flex;
+  flex-direction: column;
+  width: calc(100% - 7em);
+}
+.topTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.topMeta {
+  font-size: var(--text-footnote);
+  color: var(--color-text-tertiary);
+}
+.topAmount {
+  display: inline-block;
+  width: 7em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.notes {
+  width: 100%;
+  min-height: 8em;
+  padding: var(--space-3);
+  border: var(--hairline) solid var(--color-separator);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  line-height: 1.45;
+  resize: vertical;
+}
+.notesPrint {
+  display: none;
+  white-space: pre-wrap;
+}
+.note {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-footnote);
+  color: var(--color-text-tertiary);
+}
+.actions {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+@media print {
+  .doc {
+    margin: 0;
+    font-size: 10.5pt;
+  }
+  .summary {
+    border-radius: 6pt;
+  }
+  .h2 {
+    font-size: 13pt;
+  }
+  .table,
+  .top {
+    font-size: 10pt;
+  }
+  .notes {
+    display: none;
+  }
+  .section svg {
+    max-height: 62mm;
+  }
+  .notesPrint {
+    display: block;
+  }
+}

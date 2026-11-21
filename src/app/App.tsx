@@ -1,6 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { AddSheet } from '../features/add/AddSheet';
-import { AnalysisPage } from '../features/analysis/AnalysisPage';
 import { BudgetPage } from '../features/budget/BudgetPage';
 import { useBudgetAlert } from '../features/budget/useBudgetAlert';
 import { SettingsPage } from '../features/settings/SettingsPage';
@@ -20,6 +19,9 @@ import { TabBar } from './TabBar';
 import { UpdatePrompt } from './UpdatePrompt';
 
 const DesignPage = lazy(() => import('../features/design/DesignPage'));
+// Analysis and "Tira una linea" load on first visit: a smaller initial bundle.
+const AnalysisPage = lazy(() => import('../features/analysis/AnalysisPage'));
+const ReviewPage = lazy(() => import('../features/review/ReviewPage'));
 
 // Manifest shortcut / iOS Shortcuts / Action button: ".../rendiconto/?add=1"
 const launchedToAdd = typeof window !== 'undefined' && consumeLaunchFlag('add');
@@ -44,8 +46,8 @@ export function App() {
   }, []);
 
   return (
-    <div className={styles.app}>
-      <main className={styles.screen} key={route.name}>
+    <div className={styles.app} data-print-flow>
+      <main data-print-flow className={styles.screen} key={route.name}>
         <Screen route={route} />
       </main>
       <TabBar route={route.name} onAdd={openNewTransaction} budgetAlert={budgetAlert} />
@@ -63,7 +65,17 @@ function Screen({ route }: { route: Route }) {
     case 'transactions':
       return <TransactionsPage />;
     case 'analysis':
-      return <AnalysisPage />;
+      return (
+        <Suspense fallback={null}>
+          <AnalysisPage />
+        </Suspense>
+      );
+    case 'review':
+      return (
+        <Suspense fallback={null}>
+          <ReviewPage year={route.year} />
+        </Suspense>
+      );
     case 'budget':
       return <BudgetPage />;
     case 'settings':

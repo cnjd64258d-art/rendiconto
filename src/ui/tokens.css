@@ -33,6 +33,10 @@
   --color-warning-soft: #fbefd9;
   --color-negative-soft: #f9e2df;
 
+  /* Charts: income vs expenses (validated for CVD on the light surface) */
+  --chart-income: #2563eb;
+  --chart-expense: #d9730d;
+
   /* Category tints: --tag-<name>-bg / --tag-<name>-fg */
   --tag-gray-bg: #eeedeb;
   --tag-gray-fg: #55534e;
@@ -122,6 +126,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --chart-income: #4c8dff;
+    --chart-expense: #d07a26;
     --color-bg: #000000;
     --color-bg-grouped: #000000;
     --color-surface: #161615;

@@ -7,6 +7,7 @@ import { capitalize, formatCents, formatDayLong, formatDayShort, formatMonth, fo
 import { monthOverview } from '../../core/month';
 import { kindResolver, upcoming } from '../../core/recurring';
 import { groupByDay } from '../../core/transactions';
+import { suggestedReviewYear } from '../../core/yearReview';
 import type { Transaction } from '../../core/types';
 import { useBudgets, useCategories, useCategoryGroups, useMeta, useRecurringRules, useTransactions } from '../../db/hooks';
 import { confirmPending } from '../../db/recurring';
@@ -146,6 +147,19 @@ export function TodayPage() {
             </span>
           </p>
         </section>
+      )}
+
+      {!empty && suggestedReviewYear(todayISO) !== null && (
+        <a className={styles.reviewCard} href={`#/analisi/anno/${suggestedReviewYear(todayISO)}`}>
+          <span aria-hidden="true">📄</span>
+          <span>
+            <strong>Tira una linea {suggestedReviewYear(todayISO)}</strong>
+            <span className={styles.reviewSub}>Quanto hai speso, dove, e quanto hai risparmiato</span>
+          </span>
+          <span className={styles.reviewChevron} aria-hidden="true">
+            ›
+          </span>
+        </a>
       )}
 
       {lookups && pending.length > 0 && <PendingList items={pending} lookups={lookups} />}

@@ -85,6 +85,21 @@ export function formatMonth(month: YearMonth, withYear = true): string {
   return (withYear ? monthLong : monthOnly).format(d);
 }
 
+const MONTHS_SHORT = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+
+/** "2026-01" → "gen", or "gen 26" with the year (chart axes). */
+export function formatMonthShort(month: YearMonth, withYear = false): string {
+  const name = MONTHS_SHORT[Number(month.slice(5, 7)) - 1] ?? month;
+  return withYear ? `${name} ${month.slice(2, 4)}` : name;
+}
+
+/** Compact amount for chart axes: 123456 → "1,2k €", 45000 → "450 €". */
+export function formatCentsCompact(cents: number): string {
+  const euros = cents / 100;
+  if (Math.abs(euros) >= 1000) return `${(euros / 1000).toLocaleString(LOCALE, { maximumFractionDigits: 1 })}k €`;
+  return `${Math.round(euros).toLocaleString(LOCALE)} €`;
+}
+
 export function capitalize(text: string): string {
   return text.charAt(0).toLocaleUpperCase(LOCALE) + text.slice(1);
 }

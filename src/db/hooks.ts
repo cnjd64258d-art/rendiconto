@@ -40,3 +40,8 @@ export function useSavedViews(): SavedView[] | undefined {
 export function useSavingsGoal(year: number): SavingsGoal | null | undefined {
   return useLiveQuery(async () => (await db.savingsGoals.get(year)) ?? null, [year]);
 }
+
+/** Free notes of a year ("Tira una linea"); '' when none, undefined while loading. */
+export function useYearNote(year: number): string | undefined {
+  return useLiveQuery(async () => (await db.yearNotes.get(year))?.text ?? '', [year]);
+}
