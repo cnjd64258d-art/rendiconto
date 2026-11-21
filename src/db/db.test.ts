@@ -164,4 +164,26 @@ describe('recurring', () => {
     expect(await db.recurringRules.count()).toBe(0);
     expect(await db.transactions.count()).toBe(0);
   });
+
+  it('budgets: changes start this month, removal keeps history, demo budgets never shadow real ones', async () => {
+    const db = fresh();
+    const { saveBudget, saveSavingsGoal } = await import('./budgets');
+    await saveBudget('category', 'cat_cibo', '2026-10', { limitCents: 10000, rollover: false }, db);
+    await saveBudget('category', 'cat_cibo', '2026-10', { limitCents: 12000, rollover: true }, db);
+    expect((await db.budgets.toArray()).map((b) => [b.validFrom, b.monthlyLimitCents, b.rollover])).toEqual([['2026-10', 12000, true]]);
+    await saveBudget('category', 'cat_cibo', '2026-11', null, db);
+    const rows = (await db.budgets.toArray()).sort((a, b) => (a.validFrom < b.validFrom ? -1 : 1));
+    expect(rows.map((b) => [b.validFrom, b.monthlyLimitCents])).toEqual([['2026-10', 12000], ['2026-11', 0]]);
+
+    await saveBudget('category', 'cat_alimentari', '2026-11', { limitCents: 1, rollover: false }, db);
+    await loadDemoData('2026-11-21', db);
+    expect(await db.budgets.where('id').startsWith('demo_budget_').count()).toBe(3);
+    await removeDemoData(db);
+    expect(await db.budgets.count()).toBe(3);
+
+    await saveSavingsGoal(2026, 500000, db);
+    expect(await db.savingsGoals.get(2026)).toEqual({ year: 2026, targetCents: 500000 });
+    await saveSavingsGoal(2026, null, db);
+    expect(await db.savingsGoals.count()).toBe(0);
+  });
 });

@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { compareTransactionsDesc } from '../core/transactions';
-import type { Budget, Category, CategoryGroup, PaymentMethod, RecurringRule, SavedView, Transaction } from '../core/types';
+import type { Budget, Category, CategoryGroup, PaymentMethod, RecurringRule, SavedView, SavingsGoal, Transaction } from '../core/types';
 import { db } from './db';
 
 /** All transactions, newest first. `undefined` while loading. */
@@ -34,4 +34,9 @@ export function useBudgets(): Budget[] | undefined {
 
 export function useSavedViews(): SavedView[] | undefined {
   return useLiveQuery(() => db.savedViews.orderBy('order').toArray(), []);
+}
+
+/** The savings goal of `year`; null when not set, undefined while loading. */
+export function useSavingsGoal(year: number): SavingsGoal | null | undefined {
+  return useLiveQuery(async () => (await db.savingsGoals.get(year)) ?? null, [year]);
 }

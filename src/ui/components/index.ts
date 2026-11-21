@@ -8,6 +8,7 @@ export { BackLink, IconButton, Page } from './Page';
 export { ProgressBar, ProgressRing, progressTone } from './Progress';
 export { SegmentedControl } from './SegmentedControl';
 export { Sheet } from './Sheet';
+export { Switch } from './Switch';
 export { SwipeRow, type SwipeAction } from './SwipeRow';
 export { Chip, Chips, Tag, tagStyle } from './Tag';
 export { primeKeyboard } from './keyboard';

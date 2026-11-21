@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { openEditTransaction, openNewTransaction } from '../../app/editor';
 import { backupReminder } from '../../core/backup/backup';
-import { addDays, today } from '../../core/dates';
-import { capitalize, formatCents, formatDayLong, formatDayShort, formatMonth, spokenCents } from '../../core/format';
+import { alertSummary, budgetMonth, spendIndex, type AlertSummary, type BudgetLine } from '../../core/budget';
+import { addDays, monthOf, today } from '../../core/dates';
+import { capitalize, formatCents, formatDayLong, formatDayShort, formatMonth, formatPercent, spokenCents } from '../../core/format';
 import { monthOverview } from '../../core/month';
 import { kindResolver, upcoming } from '../../core/recurring';
 import { groupByDay } from '../../core/transactions';
@@ -31,12 +32,20 @@ export function TodayPage() {
 
   const kindOf = useMemo(() => kindResolver(categories ?? [], groups ?? []), [categories, groups]);
 
+  const index = useMemo(() => spendIndex(transactions ?? []), [transactions]);
   const overview = useMemo(
     () =>
       transactions && rules && budgets && categories
-        ? monthOverview({ transactions, rules, budgets, categories, kindOf, today: todayISO })
+        ? monthOverview({ transactions, rules, budgets, categories, kindOf, today: todayISO, index })
         : null,
-    [transactions, rules, budgets, categories, kindOf, todayISO],
+    [transactions, rules, budgets, categories, kindOf, todayISO, index],
+  );
+  const alerts = useMemo(
+    () =>
+      transactions && budgets && categories
+        ? alertSummary(budgetMonth({ budgets, transactions, categories, groups: [], month: monthOf(todayISO), index }).lines)
+        : null,
+    [transactions, budgets, categories, todayISO, index],
   );
 
   const pending = useMemo(
@@ -69,6 +78,12 @@ export function TodayPage() {
         </Banner>
       )}
 
+      {alerts && lookups && (
+        <Banner icon={alerts.tone === 'over' ? '🚨' : '⚠️'} tone={alerts.tone === 'over' ? 'negative' : 'warning'} action={{ label: 'Budget', onClick: () => (window.location.hash = '/budget') }}>
+          {alertText(alerts, (l) => (l.scope === 'group' ? groups?.find((g) => g.id === l.targetId)?.name : lookups.categories.get(l.targetId)?.name) ?? 'Budget')}
+        </Banner>
+      )}
+
       {empty && (
         <EmptyState
           emoji="🌱"
@@ -88,10 +103,14 @@ export function TodayPage() {
         <section className={styles.hero} aria-label="Questo mese">
           <div className={styles.heroLabel}>Speso a {formatMonth(overview.month).split(' ')[0]}</div>
           <AnimatedAmount cents={overview.spentCents} className={styles.heroAmount} />
-          {overview.budgetCents !== null ? (
+          {overview.budget !== null ? (
             <>
-              <div className={styles.heroBudget}>di {formatCents(overview.budgetCents, { decimals: false })} di budget</div>
-              <ProgressBar value={overview.budgetRatio} label="Budget del mese usato" />
+              <div className={styles.heroBudget}>
+                {overview.budget.spentCents === overview.spentCents
+                  ? `di ${formatCents(overview.budget.availableCents, { decimals: false })} di budget`
+                  : `${formatCents(overview.budget.spentCents, { decimals: false })} di ${formatCents(overview.budget.availableCents, { decimals: false })} nelle categorie con budget`}
+              </div>
+              <ProgressBar value={overview.budget.ratio} label="Budget del mese usato" />
               <p className={cx(styles.perDay, overview.perDayCents === 0 && styles.perDayOver)}>
                 {overview.perDayCents === 0 ? (
                   <>Budget esaurito, considerando le spese fisse ancora da pagare.</>
@@ -105,7 +124,7 @@ export function TodayPage() {
             </>
           ) : (
             <p className={styles.perDay}>
-              Senza budget per ora: quando lo imposterai (milestone Budget) qui vedrai quanto puoi spendere al giorno.
+              <a href="#/budget">Imposta un budget</a> per vedere quanto puoi spendere ancora al giorno.
             </p>
           )}
 
@@ -175,6 +194,19 @@ export function TodayPage() {
       )}
     </Page>
   );
+}
+
+function alertText(alerts: AlertSummary, nameOf: (l: BudgetLine) => string): string {
+  const [first] = alerts.lines;
+  if (!first) return '';
+  if (alerts.lines.length === 1) {
+    return first.status === 'over'
+      ? `${nameOf(first)}: budget sforato di ${formatCents(-first.remainingCents, { decimals: false })}`
+      : `${nameOf(first)}: hai usato il ${formatPercent(first.ratio)} del budget`;
+  }
+  const over = alerts.lines.filter((l) => l.status === 'over').length;
+  const names = alerts.lines.slice(0, 3).map(nameOf).join(', ') + (alerts.lines.length > 3 ? '…' : '');
+  return over > 0 ? `${alerts.lines.length} budget da tenere d'occhio (${over} sforati): ${names}` : `${alerts.lines.length} budget oltre l'80%: ${names}`;
 }
 
 function Stat({ label, cents, signed = false }: { label: string; cents: number; signed?: boolean }) {

@@ -32,15 +32,16 @@ export function ProgressBar({ value, label, thick = false }: ProgressProps) {
   );
 }
 
-export function ProgressRing({ value, label, size = 44 }: ProgressProps & { size?: number }) {
-  const tone = progressTone(value);
+/** `tone="positive"` is for goals, where more is better (green, no warning colours). */
+export function ProgressRing({ value, label, size = 44, tone: mode = 'budget' }: ProgressProps & { size?: number; tone?: 'budget' | 'positive' }) {
+  const tone = mode === 'positive' ? 'positive' : progressTone(value);
   const stroke = 4;
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const clamped = Math.min(1, Math.max(0, value));
   return (
     <svg
-      className={cx(styles.ring, tone === 'warning' && styles.warning, tone === 'over' && styles.over)}
+      className={cx(styles.ring, tone === 'warning' && styles.warning, tone === 'over' && styles.over, tone === 'positive' && styles.positive)}
       width={size}
       height={size}
       viewBox={`0 0 ${size} ${size}`}

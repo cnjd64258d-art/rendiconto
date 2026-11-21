@@ -12,6 +12,9 @@
 .banner[data-tone='warning'] {
   background: var(--color-warning-soft);
 }
+.banner[data-tone='negative'] {
+  background: var(--color-negative-soft);
+}
 .bannerIcon {
   flex: none;
   font-size: 1.1rem;

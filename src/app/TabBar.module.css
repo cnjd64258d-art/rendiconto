@@ -55,3 +55,27 @@
 .addButton:active {
   transform: scale(0.9);
 }
+
+.iconWrap {
+  position: relative;
+  display: inline-flex;
+}
+.badge {
+  position: absolute;
+  top: -1px;
+  right: -4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-warning);
+  box-shadow: 0 0 0 2px var(--color-bg, var(--color-surface));
+  animation: badge-in var(--duration-base) var(--ease-spring);
+}
+.badge[data-tone='over'] {
+  background: var(--color-negative);
+}
+@keyframes badge-in {
+  from {
+    transform: scale(0);
+  }
+}

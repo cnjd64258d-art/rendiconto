@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { monthOverview, monthlyBudgetCents } from './month';
+import { monthOverview } from './month';
 import { tx } from './test-utils';
 import type { Budget, RecurringRule } from './types';
 
@@ -16,25 +16,6 @@ const budget = (over: Partial<Budget>): Budget => ({
   rollover: false,
   validFrom: '2026-01',
   ...over,
-});
-
-describe('monthlyBudgetCents', () => {
-  it('is null without budgets', () => {
-    expect(monthlyBudgetCents([], cats, '2026-11')).toBeNull();
-  });
-  it('takes the latest valid budget per target', () => {
-    const b = [budget({ validFrom: '2026-01', monthlyLimitCents: 10000 }), budget({ validFrom: '2026-06', monthlyLimitCents: 15000 }), budget({ validFrom: '2027-01', monthlyLimitCents: 1 })];
-    expect(monthlyBudgetCents(b, cats, '2026-11')).toBe(15000);
-    expect(monthlyBudgetCents(b, cats, '2026-03')).toBe(10000);
-  });
-  it('a group budget replaces its categories', () => {
-    const b = [
-      budget({ targetId: 'cat_cibo', monthlyLimitCents: 10000 }),
-      budget({ scope: 'group', targetId: 'grp_svago', monthlyLimitCents: 30000 }),
-      budget({ targetId: 'cat_alimentari', monthlyLimitCents: 40000 }),
-    ];
-    expect(monthlyBudgetCents(b, cats, '2026-11')).toBe(70000);
-  });
 });
 
 const rule = (over: Partial<RecurringRule>): RecurringRule => ({
@@ -81,10 +62,21 @@ describe('monthOverview', () => {
     expect(o.dueExpenseCents).toBe(3000 + 73443);
     expect(o.dueIncomeCents).toBe(200000);
     expect(o.daysLeft).toBe(21);
-    expect(o.budgetCents).toBe(150000);
-    expect(o.leftCents).toBe(150000 - 22090 - 76443);
-    expect(o.perDayCents).toBe(Math.floor((150000 - 22090 - 76443) / 21));
-    expect(o.budgetRatio).toBeCloseTo(22090 / 150000);
+    // The budget covers grp_svago only: cat_cibo rows count, Abbonamenti and the mortgage do not.
+    expect(o.budget?.availableCents).toBe(150000);
+    expect(o.budget?.spentCents).toBe(17500);
+    expect(o.budget?.dueCents).toBe(3000);
+    expect(o.leftCents).toBe(150000 - 17500 - 3000);
+    expect(o.perDayCents).toBe(Math.floor((150000 - 17500 - 3000) / 21));
+    expect(o.budget?.ratio).toBeCloseTo(17500 / 150000);
+  });
+
+  it('counts fixed costs still due when their category is budgeted', () => {
+    const b = [...budgets, budget({ targetId: 'cat_mutuo', monthlyLimitCents: 80000 })];
+    const o = monthOverview({ transactions, rules, budgets: b, categories: [...cats, { id: 'cat_mutuo', groupId: 'grp_casa' }], kindOf, today });
+    expect(o.budget?.availableCents).toBe(230000);
+    expect(o.budget?.dueCents).toBe(3000 + 73443);
+    expect(o.leftCents).toBe(230000 - 17500 - 76443);
   });
 
   it('projects month-end savings from the everyday pace', () => {
@@ -101,9 +93,8 @@ describe('monthOverview', () => {
     expect(over.perDayCents).toBe(0);
     expect(over.leftCents).toBeLessThan(0);
     const none = monthOverview({ transactions, rules, budgets: [], categories: cats, kindOf, today });
-    expect(none.budgetCents).toBeNull();
+    expect(none.budget).toBeNull();
     expect(none.perDayCents).toBeNull();
-    expect(none.budgetRatio).toBe(0);
   });
 
   it('on the last day only today counts', () => {

@@ -3,7 +3,7 @@ import styles from './Feedback.module.css';
 
 interface BannerProps {
   icon?: ReactNode;
-  tone?: 'neutral' | 'warning';
+  tone?: 'neutral' | 'warning' | 'negative';
   action?: { label: string; onClick: () => void };
   children: ReactNode;
 }
