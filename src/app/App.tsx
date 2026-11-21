@@ -11,6 +11,7 @@ import { ImportPage } from '../features/settings/ImportPage';
 import { CategoriesPage } from '../features/settings/CategoriesPage';
 import { MethodsPage } from '../features/settings/MethodsPage';
 import { RecurringPage } from '../features/settings/RecurringPage';
+import { PinPage } from '../features/settings/PinPage';
 import { PlansPage } from '../features/settings/PlansPage';
 import { SharedPage } from '../features/settings/SharedPage';
 import { generateRecurring } from '../db/recurring';
@@ -18,6 +19,8 @@ import { openEditor, openNewTransaction } from './editor';
 import styles from './App.module.css';
 import { consumeLaunchFlag, parseRoute, useHash, type Route } from './router';
 import { TabBar } from './TabBar';
+import { LockScreen } from './LockScreen';
+import { startLock, useLock } from './lock';
 import { UpdatePrompt } from './UpdatePrompt';
 
 const DesignPage = lazy(() => import('../features/design/DesignPage'));
@@ -27,10 +30,13 @@ const ReviewPage = lazy(() => import('../features/review/ReviewPage'));
 
 // Manifest shortcut / iOS Shortcuts / Action button: ".../rendiconto/?add=1"
 const launchedToAdd = typeof window !== 'undefined' && consumeLaunchFlag('add');
+// The PIN lock reads its setting before the first paint of any content.
+if (typeof window !== 'undefined') startLock();
 
 export function App() {
   const route = parseRoute(useHash());
   const budgetAlert = useBudgetAlert();
+  const locked = useLock().status !== 'open';
 
   useEffect(() => {
     // No tap yet, so iOS won't show the keyboard: the sheet opens, one tap on the amount does the rest.
@@ -48,15 +54,18 @@ export function App() {
   }, []);
 
   return (
-    <div className={styles.app} data-print-flow>
-      <main data-print-flow className={styles.screen} key={route.name}>
-        <Screen route={route} />
-      </main>
-      <TabBar route={route.name} onAdd={openNewTransaction} budgetAlert={budgetAlert} />
-      <UpdatePrompt />
-      <AddSheet />
-      <ToastLayer />
-    </div>
+    <>
+      <div className={styles.app} data-print-flow inert={locked} aria-hidden={locked || undefined}>
+        <main data-print-flow className={styles.screen} key={route.name}>
+          <Screen route={route} />
+        </main>
+        <TabBar route={route.name} onAdd={openNewTransaction} budgetAlert={budgetAlert} />
+        <UpdatePrompt />
+        <AddSheet />
+        <ToastLayer />
+      </div>
+      <LockScreen />
+    </>
   );
 }
 
@@ -96,6 +105,8 @@ function Screen({ route }: { route: Route }) {
       return <PlansPage />;
     case 'shared':
       return <SharedPage />;
+    case 'pin':
+      return <PinPage />;
     case 'design':
       return (
         <Suspense fallback={null}>

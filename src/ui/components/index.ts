@@ -13,3 +13,4 @@ export { SwipeRow, type SwipeAction } from './SwipeRow';
 export { Chip, Chips, Tag, tagStyle } from './Tag';
 export { primeKeyboard } from './keyboard';
 export { cx } from './cx';
+export { useReducedMotion } from './useReducedMotion';

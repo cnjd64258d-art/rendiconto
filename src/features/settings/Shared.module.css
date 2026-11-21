@@ -76,3 +76,14 @@
   -webkit-appearance: none;
   appearance: none;
 }
+.pinSheet {
+  padding: var(--space-4) var(--gutter) var(--space-8);
+}
+.linkButton {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  font-size: var(--text-subhead);
+}

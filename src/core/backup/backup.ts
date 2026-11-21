@@ -1,4 +1,5 @@
 import { isISODate, isYearMonth } from '../dates';
+import { DEVICE_META_KEYS } from '../pin';
 import { TABLE_NAMES, type Tables, type Transaction } from '../types';
 
 export const BACKUP_FORMAT = 'rendiconto-backup';
@@ -19,7 +20,8 @@ export function createBackup(tables: Tables, appVersion: string, now: Date = new
     schemaVersion: SCHEMA_VERSION,
     appVersion,
     exportedAt: now.toISOString(),
-    tables,
+    // The PIN belongs to this iPhone: a backup never carries it.
+    tables: { ...tables, meta: tables.meta.filter((m) => !DEVICE_META_KEYS.includes(m.key)) },
   };
 }
 

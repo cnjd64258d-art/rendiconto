@@ -1,6 +1,8 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
+import { useLock } from '../../app/lock';
 import { isStandalone, useStorageStatus } from '../../app/storage';
+import { lockAfterLabel } from '../../core/pin';
 import { today } from '../../core/dates';
 import { formatBytes, formatFullDate } from '../../core/format';
 import { db } from '../../db/db';
@@ -8,9 +10,9 @@ import { generateRecurring } from '../../db/recurring';
 import { clearAllData, loadDemoData, removeDemoData } from '../../db/repo';
 import { BackLink, ConfirmSheet, ListGroup, Page, Row, showToast } from '../../ui/components';
 
-const SOON = 'In arrivo';
 
 export function SettingsPage() {
+  const pin = useLock().config;
   const storage = useStorageStatus();
   const counts = useLiveQuery(async () => ({
     all: await db.transactions.count(),
@@ -66,7 +68,7 @@ export function SettingsPage() {
       </ListGroup>
 
       <ListGroup header="Sicurezza">
-        <Row icon="🔒" label="Blocco con PIN" value={SOON} disabled />
+        <Row icon="🔒" label="Blocco con PIN" value={pin ? lockAfterLabel(pin.lockAfterSec) : 'No'} href="#/impostazioni/pin" chevron />
       </ListGroup>
 
       <ListGroup header="Info">

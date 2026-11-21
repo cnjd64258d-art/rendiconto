@@ -96,6 +96,23 @@ describe('database', () => {
     expect(await db.transactions.count()).toBe(0);
     expect((await db.categories.get('cat_cibo'))?.name).toBe('Cibo');
   });
+
+  it('keeps the PIN on this iPhone: not in backups, kept on restore and on clear', async () => {
+    const source = fresh();
+    await source.meta.put({ key: 'pinLock', value: { hash: 'source' } });
+    const backup = createBackup(await readAllTables(source), 'test');
+    expect(JSON.stringify(backup)).not.toContain('pinLock');
+
+    const target = fresh();
+    await target.meta.put({ key: 'pinLock', value: { hash: 'target' } });
+    await replaceAllTables({ ...backup.tables, meta: [{ key: 'pinLock', value: { hash: 'evil' } }] }, target);
+    expect((await target.meta.get('pinLock'))?.value).toEqual({ hash: 'target' });
+
+    await clearAllData(target);
+    expect((await target.meta.get('pinLock'))?.value).toEqual({ hash: 'target' });
+    await clearAllData(target, false);
+    expect(await target.meta.get('pinLock')).toBeUndefined();
+  });
 });
 
 describe('imports', () => {

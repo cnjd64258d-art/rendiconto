@@ -20,7 +20,7 @@
   /* Text: hierarchy comes from weight and size, these greys only soften. */
   --color-text: #37352f;
   --color-text-secondary: #5f5e59;
-  --color-text-tertiary: #767570;
+  --color-text-tertiary: #6f6e69;
   --color-text-on-accent: #ffffff;
 
   /* Accent (single) and semantic */

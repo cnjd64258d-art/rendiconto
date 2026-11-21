@@ -15,7 +15,7 @@ import {
 import type { Category, CategoryGroup, Frequency, PaymentMethod, RecurringRule } from '../../core/types';
 import { useCategories, useCategoryGroups, usePaymentMethods, useRecurringRules } from '../../db/hooks';
 import { deleteRule, generateRecurring, saveRule } from '../../db/recurring';
-import { BackLink, Button, Chip, Chips, ConfirmSheet, ListGroup, Page, Row, SegmentedControl, showToast } from '../../ui/components';
+import { BackLink, Button, Chip, Chips, ConfirmSheet, ListGroup, Page, Row, SegmentedControl, showToast, EmptyState } from '../../ui/components';
 import { EditSheet } from './EditSheet';
 import styles from './Form.module.css';
 
@@ -84,6 +84,11 @@ export function RecurringPage() {
 
   return (
     <Page title="Ricorrenti" grouped leading={back}>
+      {rules.length === 0 && (
+        <EmptyState emoji="🔁" title="Nessuna spesa ricorrente">
+          Affitto, abbonamenti, bollette: inseriscili una volta e te li ricordo io alla scadenza.
+        </EmptyState>
+      )}
       <ListGroup
         footer={
           active.length > 0

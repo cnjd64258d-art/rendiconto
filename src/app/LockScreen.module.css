@@ -1,0 +1,20 @@
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(env(safe-area-inset-top) + var(--space-6)) var(--gutter) calc(env(safe-area-inset-bottom) + var(--space-6));
+  background: var(--color-bg-grouped);
+  overflow-y: auto;
+  /* No fade-in: the content behind must never show. */
+}
+.link {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  font-size: var(--text-subhead);
+}

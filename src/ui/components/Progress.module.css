@@ -12,6 +12,13 @@
   transition:
     transform var(--duration-slow) var(--ease-spring),
     background-color var(--duration-base);
+  /* Bars fill up when a screen opens (reduced motion: instant, via the duration tokens). */
+  animation: grow var(--duration-slow) var(--ease-out) both;
+}
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
 }
 .thick {
   height: 8px;

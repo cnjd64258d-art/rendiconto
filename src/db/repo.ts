@@ -1,3 +1,4 @@
+import { DEVICE_META_KEYS } from '../core/pin';
 import { demoSharedData, generateDemoTransactions } from '../core/demo';
 import { demoBudgets } from '../core/budget';
 import { demoRecurringRules } from '../core/recurring';
@@ -60,19 +61,24 @@ export async function readAllTables(db: RendicontoDB = defaultDb): Promise<Table
 /** Replaces everything with a backup's content, atomically. */
 export async function replaceAllTables(tables: Tables, db: RendicontoDB = defaultDb): Promise<void> {
   await db.transaction('rw', db.allTables, async () => {
+    // The PIN lock stays as it is on this iPhone, whatever the backup contains.
+    const device = await db.meta.where('key').anyOf([...DEVICE_META_KEYS]).toArray();
     for (const name of TABLE_NAMES) {
       const table = db.table(name);
       await table.clear();
-      const rows = tables[name] as unknown[];
+      const rows = (tables[name] as unknown[]).filter((r) => name !== 'meta' || !DEVICE_META_KEYS.includes((r as { key: string }).key));
       if (rows.length > 0) await table.bulkPut(rows);
     }
+    if (device.length > 0) await db.meta.bulkPut(device);
   });
 }
 
-/** Deletes all data and restores the starting categories and methods. */
-export async function clearAllData(db: RendicontoDB = defaultDb): Promise<void> {
+/** Deletes all data and restores the starting categories and methods. The PIN stays unless `keepPin` is false. */
+export async function clearAllData(db: RendicontoDB = defaultDb, keepPin = true): Promise<void> {
   await db.transaction('rw', db.allTables, async () => {
+    const device = keepPin ? await db.meta.where('key').anyOf([...DEVICE_META_KEYS]).toArray() : [];
     for (const table of db.allTables) await table.clear();
+    if (device.length > 0) await db.meta.bulkPut(device);
     await db.categoryGroups.bulkAdd(SEED_GROUPS);
     await db.categories.bulkAdd(SEED_CATEGORIES);
     await db.paymentMethods.bulkAdd(SEED_PAYMENT_METHODS);
