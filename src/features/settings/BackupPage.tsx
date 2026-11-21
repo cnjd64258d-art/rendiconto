@@ -4,6 +4,7 @@ import { shareOrDownload } from '../../app/share';
 import { backupFileName, createBackup, parseBackup, summarizeBackup, type BackupFile } from '../../core/backup/backup';
 import { transactionsToCsv } from '../../core/csv';
 import { formatDayShort, formatFullDate } from '../../core/format';
+import { generateRecurring } from '../../db/recurring';
 import { readAllTables, replaceAllTables, setMeta, META_LAST_BACKUP } from '../../db/repo';
 import { BackLink, ConfirmSheet, ListGroup, Page, Property, Row, showToast } from '../../ui/components';
 import styles from './Settings.module.css';
@@ -90,6 +91,7 @@ export function BackupPage() {
         onConfirm={async () => {
           if (!candidate) return;
           await replaceAllTables(candidate.backup.tables);
+          await generateRecurring();
           // The restored data is exactly what that backup contains: it counts as backed up.
           await setMeta(META_LAST_BACKUP, candidate.backup.exportedAt || new Date().toISOString());
           setCandidate(null);

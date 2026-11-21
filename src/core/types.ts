@@ -95,6 +95,8 @@ export interface RecurringRule {
   categoryId: Id;
   paymentMethodId: Id;
   active: boolean;
+  /** Last date already turned into a pending transaction (or skipped). Generation resumes the day after. */
+  generatedThrough?: ISODate;
 }
 
 export interface InstallmentPlan {

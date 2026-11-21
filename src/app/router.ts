@@ -12,6 +12,9 @@ export type Route =
   | { name: 'settings' }
   | { name: 'backup' }
   | { name: 'import' }
+  | { name: 'categories' }
+  | { name: 'methods' }
+  | { name: 'recurring' }
   | { name: 'design' }
   | { name: 'notFound'; path: string };
 
@@ -32,6 +35,12 @@ export function parseRoute(hash: string): Route {
       return { name: 'backup' };
     case '/impostazioni/import':
       return { name: 'import' };
+    case '/impostazioni/categorie':
+      return { name: 'categories' };
+    case '/impostazioni/metodi':
+      return { name: 'methods' };
+    case '/impostazioni/ricorrenti':
+      return { name: 'recurring' };
     case '/design':
       return { name: 'design' };
     default:
