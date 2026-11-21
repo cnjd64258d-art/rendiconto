@@ -16,6 +16,8 @@ describe('parseRoute', () => {
     ['#/impostazioni/categorie', 'categories'],
     ['#/impostazioni/metodi', 'methods'],
     ['#/impostazioni/ricorrenti', 'recurring'],
+    ['#/impostazioni/rate', 'plans'],
+    ['#/impostazioni/condivise', 'shared'],
     ['#/boh', 'notFound'],
     ['#/analisi/anno/20x6', 'notFound'],
   ])('%j → %s', (hash, name) => {

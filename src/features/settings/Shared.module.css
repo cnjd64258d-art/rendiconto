@@ -1,0 +1,78 @@
+.detail {
+  display: grid;
+  gap: var(--space-4);
+  padding: 0 0 var(--space-6);
+}
+.detail > :not(section) {
+  margin-left: var(--gutter);
+  margin-right: var(--gutter);
+  max-width: calc(100% - 2 * var(--gutter));
+}
+.detail section {
+  margin-bottom: 0;
+}
+.big {
+  font-size: var(--text-title3);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.muted {
+  font-weight: var(--weight-regular);
+  color: var(--color-text-secondary);
+}
+.caption {
+  margin: calc(-1 * var(--space-2)) var(--gutter) 0;
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}
+.summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin: 0 var(--gutter) var(--space-6);
+}
+.summary > div {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: var(--hairline) solid var(--color-separator);
+  background: var(--color-surface);
+}
+.summaryLabel {
+  font-size: var(--text-footnote);
+  color: var(--color-text-secondary);
+}
+.summaryValue {
+  font-size: var(--text-title3);
+  font-weight: var(--weight-light);
+  font-variant-numeric: tabular-nums;
+}
+.positive {
+  color: var(--color-positive);
+}
+.negative {
+  color: var(--color-negative);
+}
+.settled {
+  color: var(--color-text-tertiary);
+  text-decoration: line-through;
+}
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-fill-strong);
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-semibold);
+}
+.search {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-fill);
+  color: var(--color-text);
+  -webkit-appearance: none;
+  appearance: none;
+}

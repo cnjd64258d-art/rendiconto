@@ -183,3 +183,12 @@
   color: var(--color-text-tertiary);
   font-size: 1.4rem;
 }
+.upLink {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}

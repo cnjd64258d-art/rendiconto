@@ -186,4 +186,31 @@ describe('recurring', () => {
     await saveSavingsGoal(2026, null, db);
     expect(await db.savingsGoals.count()).toBe(0);
   });
+
+  it('shared data: demo brings people, a plan and a repayment; deleting a plan keeps its instalments', async () => {
+    const db = fresh();
+    const { deletePlan } = await import('./shared');
+    await loadDemoData('2026-11-21', db);
+    expect(await db.people.count()).toBe(2);
+    expect(await db.transactions.where('installmentPlanId').equals('demo_plan_madeira').count()).toBe(2);
+    await deletePlan('demo_plan_madeira', db);
+    expect(await db.transactions.where('installmentPlanId').equals('demo_plan_madeira').count()).toBe(0);
+    expect(await db.transactions.where('id').startsWith('demo_shared_').count()).toBe(5);
+    await removeDemoData(db);
+    expect(await db.people.count()).toBe(0);
+    expect(await db.settlements.count()).toBe(0);
+    expect(await db.transactions.count()).toBe(0);
+  });
+
+  it('the editor can remove a split or an instalment link', async () => {
+    const db = fresh();
+    const r = input();
+    const t = await addTransaction({ ...r, split: { totalCents: r.amountCents, myShareCents: 1, paidBy: 'me', shares: [] }, installmentPlanId: 'p', installmentIndex: 1 }, db);
+    await updateTransaction(t.id, r, db);
+    expect((await db.transactions.get(t.id))?.split).toBeDefined();
+    await updateTransaction(t.id, r, db, ['split', 'installmentPlanId', 'installmentIndex']);
+    const after = await db.transactions.get(t.id);
+    expect(after?.split).toBeUndefined();
+    expect(after?.installmentPlanId).toBeUndefined();
+  });
 });

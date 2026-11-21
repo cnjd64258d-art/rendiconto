@@ -32,8 +32,8 @@ export function SettingsPage() {
         <Row icon="🏷️" label="Categorie" href="#/impostazioni/categorie" chevron />
         <Row icon="💳" label="Metodi di pagamento" href="#/impostazioni/metodi" chevron />
         <Row icon="🔁" label="Ricorrenti" href="#/impostazioni/ricorrenti" chevron />
-        <Row icon="🧾" label="Piani a rate" value={SOON} disabled />
-        <Row icon="🤝" label="Spese condivise" value={SOON} disabled />
+        <Row icon="🧾" label="Piani a rate" href="#/impostazioni/rate" chevron />
+        <Row icon="🤝" label="Spese condivise" href="#/impostazioni/condivise" chevron />
       </ListGroup>
 
       <ListGroup

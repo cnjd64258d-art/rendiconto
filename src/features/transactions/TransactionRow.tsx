@@ -53,7 +53,8 @@ export const TransactionRow = memo(function TransactionRow({ t, lookups }: { t: 
           <span className={styles.meta}>
             {meta}
             {accrual}
-            {t.split ? ' · condivisa' : ''}
+            {t.installmentPlanId ? ' · 🧾 rata' : ''}
+            {t.split ? ` · 👥 tua quota di ${formatCents(t.split.totalCents)}` : ''}
           </span>
         </span>
         <span className={cx(styles.amount, t.kind === 'income' && styles.income, t.kind === 'transfer' && styles.transfer)} aria-hidden="true">

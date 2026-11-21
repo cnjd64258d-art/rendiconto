@@ -1,7 +1,7 @@
-import { addDays, isoWeekday, monthOf, parseISODate, type ISODate } from './dates';
+import { addDays, addMonths, isoWeekday, monthOf, parseISODate, type ISODate } from './dates';
 import type { Cents } from './money';
 import { dedupeKey } from './transactions';
-import type { Id, Transaction, TransactionKind } from './types';
+import type { Id, InstallmentPlan, Person, Settlement, Transaction, TransactionKind } from './types';
 
 /** Tiny deterministic PRNG (mulberry32): demo data is the same every time. */
 function rng(seed: number) {
@@ -76,4 +76,84 @@ export function generateDemoTransactions(today: ISODate, days = 120, seed = 2026
     if (day === 27) add(date, { title: 'Stipendio', cents: 205000, categoryId: 'cat_stipendio', methodId: 'pm_conto', kind: 'income' });
   }
   return out;
+}
+
+export interface DemoShared {
+  people: Person[];
+  plans: InstallmentPlan[];
+  transactions: Transaction[];
+  settlements: Settlement[];
+}
+
+/**
+ * Demo for M8: two friends, a flight paid in three instalments (two paid, accrual = the trip's month),
+ * shared dinners and fuel, one repayment. Ids start with `demo_`.
+ */
+export function demoSharedData(today: ISODate): DemoShared {
+  const people: Person[] = [
+    { id: 'demo_person_stefano', name: 'Stefano', archived: false },
+    { id: 'demo_person_nicola', name: 'Nicola', archived: false },
+  ];
+  const trip = addMonths(monthOf(today), 4);
+  const plans: InstallmentPlan[] = [
+    {
+      id: 'demo_plan_madeira',
+      title: 'Volo Madeira',
+      totalCents: 45000,
+      count: 3,
+      accrualMonth: trip,
+      categoryId: 'cat_viaggi',
+      paymentMethodId: 'pm_conto',
+      notes: 'Andata e ritorno, due persone',
+      closed: false,
+    },
+  ];
+  let n = 0;
+  const row = (daysAgo: number, title: string, cents: Cents, categoryId: Id, extra: Partial<Transaction> = {}): Transaction => {
+    n += 1;
+    const date = addDays(today, -daysAgo);
+    const createdAt = `${date}T20:${String(n).padStart(2, '0')}:00.000Z`;
+    return {
+      id: `demo_shared_${String(n).padStart(3, '0')}`,
+      title,
+      amountCents: cents,
+      kind: 'expense',
+      date,
+      accrualMonth: monthOf(date),
+      categoryId,
+      paymentMethodId: 'pm_conto',
+      status: 'confirmed',
+      notes: '',
+      tags: ['demo'],
+      dedupeKey: dedupeKey(date, cents, title),
+      createdAt,
+      updatedAt: createdAt,
+      ...extra,
+    };
+  };
+  const transactions: Transaction[] = [
+    row(50, 'Volo Madeira · Prima rata', 15000, 'cat_viaggi', { accrualMonth: trip, installmentPlanId: 'demo_plan_madeira', installmentIndex: 1 }),
+    row(20, 'Volo Madeira · Seconda rata', 15000, 'cat_viaggi', { accrualMonth: trip, installmentPlanId: 'demo_plan_madeira', installmentIndex: 2 }),
+    row(26, 'Benzina gita al lago', 6000, 'cat_trasporti', {
+      split: { totalCents: 6000, myShareCents: 3000, paidBy: 'me', shares: [{ personId: 'demo_person_stefano', amountCents: 3000 }] },
+    }),
+    row(12, 'Cena da Gino', 9000, 'cat_cibo', {
+      split: {
+        totalCents: 9000,
+        myShareCents: 3000,
+        paidBy: 'me',
+        shares: [
+          { personId: 'demo_person_stefano', amountCents: 3000 },
+          { personId: 'demo_person_nicola', amountCents: 3000 },
+        ],
+      },
+    }),
+    row(5, 'Padel', 4000, 'cat_svago', {
+      split: { totalCents: 4000, myShareCents: 2000, paidBy: 'demo_person_nicola', shares: [{ personId: 'demo_person_nicola', amountCents: 2000 }] },
+    }),
+  ];
+  const settlements: Settlement[] = [
+    { id: 'demo_settlement_1', personId: 'demo_person_stefano', direction: 'in', amountCents: 3000, date: addDays(today, -20), paymentMethodId: 'pm_satispay', note: 'Benzina' },
+  ];
+  return { people, plans, transactions, settlements };
 }

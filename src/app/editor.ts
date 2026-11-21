@@ -8,6 +8,8 @@ export interface EditorState {
   /** Changes every time the sheet opens, to reset the form. */
   session: number;
   editing: Transaction | null;
+  /** New entry already linked to an instalment plan ("Registra la prossima rata"). */
+  planId?: string;
 }
 
 let state: EditorState = { open: false, session: 0, editing: null };
@@ -22,6 +24,12 @@ function set(next: EditorState) {
 export function openNewTransaction(): void {
   primeKeyboard('decimal');
   set({ open: true, session: state.session + 1, editing: null });
+}
+
+/** Call from a tap handler: a new expense that is the next instalment of a plan. */
+export function openNewInstalment(planId: string): void {
+  primeKeyboard('decimal');
+  set({ open: true, session: state.session + 1, editing: null, planId });
 }
 
 export function openEditTransaction(t: Transaction): void {
