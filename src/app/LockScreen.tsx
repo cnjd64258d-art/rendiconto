@@ -29,23 +29,27 @@ export function LockScreen() {
     unlock();
   };
 
-  // Face ID: offered once by itself when the lock appears; iOS may require a tap, then the button does it.
+  // With Face ID on, the lock shows one big "Usa Face ID" button and the keypad only on request.
+  // iOS starts Face ID in a web app only from a tap, so there is no automatic attempt.
+  const [usePin, setUsePin] = useState(false);
+  const [seenStatus, setSeenStatus] = useState(status);
+  if (seenStatus !== status) {
+    setSeenStatus(status);
+    if (status === 'locked') {
+      setUsePin(false);
+      setError(null);
+    }
+  }
   const asking = useRef(false);
   const tryBiometric = async () => {
     if (!biometric || asking.current) return;
     asking.current = true;
+    setError(null);
     const result = await unlockWithBiometric(biometric);
     asking.current = false;
     if (result === 'ok') await passed();
-    else if (result === 'failed') setError('Face ID non riuscito, usa il PIN');
+    else if (result === 'failed') setError('Face ID non riuscito: riprova o usa il PIN');
   };
-  const tryRef = useRef(tryBiometric);
-  useEffect(() => {
-    tryRef.current = tryBiometric;
-  });
-  useEffect(() => {
-    if (status === 'locked' && biometric) void tryRef.current();
-  }, [status, biometric]);
 
   const blockedMs = remainingBlockMs(attempts, now);
   useEffect(() => {
@@ -73,6 +77,48 @@ export function LockScreen() {
     setErrorKey((k) => k + 1);
   };
 
+  const forgotSheet = (
+    <ConfirmSheet
+      open={forgot}
+      onClose={() => setForgot(false)}
+      emoji="🔑"
+      title="PIN dimenticato"
+      confirmLabel="Cancella tutto e togli il PIN"
+      secondConfirmLabel="Sì, cancella tutti i dati"
+      destructive
+      onConfirm={async () => {
+        await eraseEverythingAndPin();
+        setForgot(false);
+        setPinConfig(null);
+      }}
+    >
+      Il PIN non si può recuperare: non viene mai salvato in chiaro. Per riaprire l'app devi cancellare tutti i dati
+      di Ledgerline su questo iPhone. Dopo potrai ripristinare un backup da Impostazioni → Backup.
+    </ConfirmSheet>
+  );
+
+  if (biometric && !usePin) {
+    return (
+      <div className={styles.screen} role="dialog" aria-modal="true" aria-label="Ledgerline è bloccato">
+        <div className={styles.face}>
+          <span className={styles.faceGlyph} aria-hidden="true">
+            <FaceIdIcon size={56} />
+          </span>
+          <h1 className={styles.faceTitle}>Ledgerline è bloccato</h1>
+          <button type="button" className={styles.facePrimary} onClick={() => void tryBiometric()}>
+            Usa Face ID
+          </button>
+          <p className={styles.faceError} role="alert">
+            {error ?? ''}
+          </p>
+          <button type="button" className={styles.link} onClick={() => setUsePin(true)}>
+            Usa il PIN
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.screen} role="dialog" aria-modal="true" aria-label="Ledgerline è bloccato">
       <PinPad
@@ -97,23 +143,7 @@ export function LockScreen() {
           </>
         }
       />
-      <ConfirmSheet
-        open={forgot}
-        onClose={() => setForgot(false)}
-        emoji="🔑"
-        title="PIN dimenticato"
-        confirmLabel="Cancella tutto e togli il PIN"
-        secondConfirmLabel="Sì, cancella tutti i dati"
-        destructive
-        onConfirm={async () => {
-          await eraseEverythingAndPin();
-          setForgot(false);
-          setPinConfig(null);
-        }}
-      >
-        Il PIN non si può recuperare: non viene mai salvato in chiaro. Per riaprire l'app devi cancellare tutti i dati
-        di Ledgerline su questo iPhone. Dopo potrai ripristinare un backup da Impostazioni → Backup.
-      </ConfirmSheet>
+      {forgotSheet}
     </div>
   );
 }
