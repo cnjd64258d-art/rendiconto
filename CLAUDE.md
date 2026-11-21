@@ -1,6 +1,11 @@
-# Rendiconto — project guide
+# Ledgerline — project guide
 
-Personal-finance PWA for iPhone. Data lives only on the device (IndexedDB).
+Personal-finance PWA for iPhone, named **Ledgerline** (renamed from "Rendiconto" after M9). The visible name
+(manifest, Home Screen title, page title, UI text, export file names) is Ledgerline; the repo, the URL
+(`/rendiconto/`), the IndexedDB name (`rendiconto`), the backup format id (`rendiconto-backup`) and the class
+`RendicontoDB` keep the old name so existing data, backups and installs keep working. "Rendiconto YYYY" stays as the
+title of the yearly statement (it is the Italian word for it), and the import note "Importato da Rendiconto" refers
+to the old spreadsheet. Data lives only on the device (IndexedDB).
 The owner works **only from an iPhone**: never ask them to run commands.
 Everything is built, tested and deployed by GitHub Actions; they verify by
 opening https://cnjd64258d-art.github.io/rendiconto/ in Safari / from the Home Screen.
@@ -166,6 +171,11 @@ tests/fixtures synthetic CSVs only
 - Accessibility: text tokens ≥ 4.5:1 on every background (tertiary darkened), tap targets ≥ 44px (pseudo-element hit
   areas on compact pills), Dynamic Type via `font: -apple-system-body` on `html`. Motion: global reduced-motion rule
   plus duration tokens at 1ms; progress bars grow on open, screens rise slightly.
+- Face ID / Touch ID (after M9): WebAuthn platform passkey "Ledgerline" (`app/biometric.ts`, ES256, UV required),
+  verified locally in `core/biometric.ts` (challenge, origin, RP id hash, UP+UV flags, ECDSA signature with the stored
+  SPKI). Config in `meta.biometricLock` (a `DEVICE_META_KEYS` entry); only available while a PIN is set, which stays
+  the fallback; removing the PIN removes it. `create`/`get` run straight from a tap (iOS gesture rule); the lock
+  screen also tries once by itself, then shows "Usa Face ID". E2E-checked with Chromium's virtual authenticator.
 - Icon: `public/logo.svg` / `logo-dark.svg` (three entries, a ruled line, the total). Settings sub-pages have empty states.
 
 ## Data model (agreed plan, Dexie v1 from M2)

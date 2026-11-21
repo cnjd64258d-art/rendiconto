@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react';
+import type { BiometricConfig } from '../core/biometric';
 import { shouldLockOnReturn, type PinConfig } from '../core/pin';
-import { readPin } from '../db/pin';
+import { readBiometric, readPin } from '../db/pin';
 
 /** "checking" until the PIN setting is read, so the content never flashes before the lock. */
 export type LockStatus = 'checking' | 'locked' | 'open';
@@ -8,9 +9,11 @@ export type LockStatus = 'checking' | 'locked' | 'open';
 interface LockState {
   status: LockStatus;
   config: PinConfig | null;
+  /** Face ID / Touch ID passkey, only while a PIN is set. */
+  biometric: BiometricConfig | null;
 }
 
-let state: LockState = { status: 'checking', config: null };
+let state: LockState = { status: 'checking', config: null, biometric: null };
 let hiddenAt: number | null = null;
 const listeners = new Set<() => void>();
 
@@ -38,9 +41,13 @@ export function lockNow(): void {
   if (state.config) set({ ...state, status: 'locked' });
 }
 
-/** After a change in Settings: the app stays open. */
+/** After a change in Settings: the app stays open. Removing the PIN removes Face ID too. */
 export function setPinConfig(config: PinConfig | null): void {
-  set({ status: 'open', config });
+  set({ status: 'open', config, biometric: config ? state.biometric : null });
+}
+
+export function setBiometricConfig(biometric: BiometricConfig | null): void {
+  set({ ...state, biometric });
 }
 
 function onVisibility() {
@@ -59,8 +66,8 @@ let started = false;
 export function startLock(): void {
   if (started) return;
   started = true;
-  void readPin()
-    .then((config) => set({ status: config ? 'locked' : 'open', config }))
-    .catch(() => set({ status: 'open', config: null }));
+  void Promise.all([readPin(), readBiometric()])
+    .then(([config, biometric]) => set({ status: config ? 'locked' : 'open', config, biometric: config ? biometric : null }))
+    .catch(() => set({ status: 'open', config: null, biometric: null }));
   document.addEventListener('visibilitychange', onVisibility);
 }

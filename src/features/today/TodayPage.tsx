@@ -96,7 +96,7 @@ export function TodayPage() {
       {empty && (
         <EmptyState
           emoji="🌱"
-          title="Benvenuto in Rendiconto"
+          title="Benvenuto in Ledgerline"
           action={
             <Button variant="secondary" onClick={openNewTransaction}>
               Registra la prima spesa

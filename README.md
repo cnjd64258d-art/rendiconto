@@ -1,4 +1,4 @@
-# Rendiconto
+# Ledgerline
 
 Personal finance PWA for iPhone: fast expense entry, Notion-like views, yearly review.
 All data stays on the device (IndexedDB). No backend, no accounts, no analytics.

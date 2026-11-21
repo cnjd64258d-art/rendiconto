@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { lockNow, setPinConfig, useLock } from '../../app/lock';
+import { useEffect, useState } from 'react';
+import { biometricAvailable, registerBiometric } from '../../app/biometric';
+import { lockNow, setBiometricConfig, setPinConfig, useLock } from '../../app/lock';
 import { PinPad } from '../../app/PinPad';
 import { createPinConfig, LOCK_AFTER_OPTIONS, DEFAULT_LOCK_AFTER, lockAfterLabel, verifyPin, type PinLength } from '../../core/pin';
-import { removePin, savePin } from '../../db/pin';
+import { removePin, saveBiometric, savePin } from '../../db/pin';
 import { BackLink, Button, ListGroup, Page, Row, Sheet, Switch, showToast } from '../../ui/components';
 import own from './Shared.module.css';
 
@@ -21,9 +22,33 @@ interface Flow {
 const TITLES: Record<Purpose, string> = { enable: 'Attiva il PIN', change: 'Cambia PIN', disable: 'Disattiva il PIN' };
 
 export function PinPage() {
-  const { config } = useLock();
+  const { config, biometric } = useLock();
   const [flow, setFlow] = useState<Flow | null>(null);
   const [busy, setBusy] = useState(false);
+  const [canBiometric, setCanBiometric] = useState(false);
+  useEffect(() => {
+    void biometricAvailable().then(setCanBiometric);
+  }, []);
+
+  // Called straight from the tap: iOS shows Face ID only inside a user gesture.
+  const toggleBiometric = (on: boolean) => {
+    if (!on) {
+      void saveBiometric(null).then(() => {
+        setBiometricConfig(null);
+        showToast('Face ID disattivato');
+      });
+      return;
+    }
+    void registerBiometric().then(async (created) => {
+      if (!created) {
+        showToast('Face ID non attivato', { icon: 'none' });
+        return;
+      }
+      await saveBiometric(created);
+      setBiometricConfig(created);
+      showToast('Face ID attivato');
+    });
+  };
   const back = <BackLink href="#/impostazioni" label="Impostazioni" />;
 
   const start = (purpose: Purpose) =>
@@ -81,8 +106,20 @@ export function PinPage() {
         {config && <Row icon="🔢" label="Cambia PIN" chevron onClick={() => start('change')} />}
       </ListGroup>
 
+      {config && canBiometric && (
+        <ListGroup
+          footer="Sblocchi con il viso; il PIN resta sempre valido come alternativa. iPhone salva una passkey «Ledgerline» nel portachiavi: i tuoi dati non lasciano il telefono."
+        >
+          <Row
+            icon="🙂"
+            label="Sblocca con Face ID"
+            value={<Switch checked={biometric !== null} label="Sblocca con Face ID" onChange={toggleBiometric} />}
+          />
+        </ListGroup>
+      )}
+
       {config && (
-        <ListGroup header="Blocca di nuovo" footer="Quando torni in Rendiconto dopo questo tempo in background, chiede il PIN. Si blocca sempre alla riapertura.">
+        <ListGroup header="Blocca di nuovo" footer="Quando torni in Ledgerline dopo questo tempo in background, chiede il PIN. Si blocca sempre alla riapertura.">
           {LOCK_AFTER_OPTIONS.map((sec) => (
             <Row
               key={sec}

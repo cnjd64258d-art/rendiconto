@@ -26,7 +26,8 @@ export const DEFAULT_LOCK_AFTER = 60;
 /** Meta keys that stay on this iPhone: never exported in a backup, kept on restore. */
 export const META_PIN = 'pinLock';
 export const META_PIN_ATTEMPTS = 'pinAttempts';
-export const DEVICE_META_KEYS: readonly string[] = [META_PIN, META_PIN_ATTEMPTS];
+export const META_BIOMETRIC_LOCK = 'biometricLock';
+export const DEVICE_META_KEYS: readonly string[] = [META_PIN, META_PIN_ATTEMPTS, META_BIOMETRIC_LOCK];
 
 export const NO_ATTEMPTS: PinAttempts = { failures: 0, blockedUntil: 0 };
 const FREE_FAILURES = 5;
