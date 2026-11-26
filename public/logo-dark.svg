@@ -1,10 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Three entries, a ruled line ("tira una linea") and the total. -->
-  <g fill="#EDEDEC">
-    <rect x="104" y="104" width="304" height="46" rx="23" opacity=".3"/>
-    <rect x="104" y="180" width="228" height="46" rx="23" opacity=".5"/>
-    <rect x="104" y="256" width="268" height="46" rx="23" opacity=".75"/>
+  <!-- Three entries, a ruled line ("tira una linea") and the total, white on a green tile. -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3FD46C"/>
+      <stop offset="1" stop-color="#15924A"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#tile)"/>
+  <g fill="#FFFFFF">
+    <rect x="104" y="104" width="304" height="46" rx="23" opacity=".55"/>
+    <rect x="104" y="180" width="228" height="46" rx="23" opacity=".7"/>
+    <rect x="104" y="256" width="268" height="46" rx="23" opacity=".85"/>
     <rect x="104" y="333" width="304" height="10" rx="5"/>
+    <rect x="104" y="366" width="304" height="58" rx="29"/>
   </g>
-  <rect x="104" y="366" width="304" height="58" rx="29" fill="#4C8DFF"/>
 </svg>
