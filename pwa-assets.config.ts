@@ -30,8 +30,8 @@ export default defineConfig({
   headLinkOptions: { preset: '2023' },
   preset: {
     ...minimal2023Preset,
-    apple: { sizes: [180], padding: 0, resizeOptions: { background: '#F7F6F3', fit: 'contain' } },
-    maskable: { sizes: [512], padding: 0, resizeOptions: { background: '#F7F6F3', fit: 'contain' } },
+    apple: { sizes: [180], padding: 0, resizeOptions: { background: '#29B35A', fit: 'contain' } },
+    maskable: { sizes: [512], padding: 0, resizeOptions: { background: '#29B35A', fit: 'contain' } },
     appleSplashScreens: createAppleSplashScreens(
       {
         padding: 0.35,

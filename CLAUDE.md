@@ -180,7 +180,7 @@ tests/fixtures synthetic CSVs only
 - Today hero (owner's request): the spent amount is bold; Entrate / Uscite / Saldo are tinted cards using
   `--color-income(-soft)` (blue) and `--color-expense(-soft)` (orange), the charts' hues darkened for text contrast,
   and the balance green/red (`--color-positive-soft` / `--color-negative-soft`).
-- Icon: `public/logo.svg` / `logo-dark.svg` (three entries, a ruled line, the total). Settings sub-pages have empty states.
+- Icon: `public/logo.svg` / `logo-dark.svg` (three entries, a ruled line, the total), white on a green gradient tile (owner asked for colours like a spreadsheet app; the shape stays our own). Apple/maskable background `#29B35A`. Settings sub-pages have empty states.
 
 ## Data model (agreed plan, Dexie v1 from M2)
 transactions, categoryGroups, categories, paymentMethods, people, recurringRules,
