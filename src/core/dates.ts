@@ -82,6 +82,13 @@ export function daysLeftInMonth(date: ISODate): number {
   return daysInMonth(year, month) - day + 1;
 }
 
+/** Whole days from `from` to `to` (negative when `to` comes first). */
+export function daysBetween(from: ISODate, to: ISODate): number {
+  const a = parseISODate(from);
+  const b = parseISODate(to);
+  return Math.round((Date.UTC(b.year, b.month - 1, b.day) - Date.UTC(a.year, a.month - 1, a.day)) / 86_400_000);
+}
+
 export function compareISO(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
 }

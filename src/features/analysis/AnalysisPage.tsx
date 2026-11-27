@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useAmountsHidden } from '../../ui/privacy';
 import {
   BASIS_LABELS,
   breakdown,
@@ -39,6 +40,8 @@ export default function AnalysisPage() {
   const reviewYear = state.mode === 'year' ? state.year : yearOf(period.to);
   const chartPeriod: Period = state.mode === 'month' ? { from: addMonths(state.month, -11), to: state.month } : period;
 
+  // Insight texts contain amounts: rebuild them when amounts are hidden or shown.
+  const hidden = useAmountsHidden();
   const data = useMemo(() => {
     if (!transactions || !categories || !groups || !rules) return null;
     const rows = inPeriod(transactions, period, state.basis);
@@ -63,7 +66,7 @@ export default function AnalysisPage() {
     };
     // period/chartPeriod are derived from state; listing their parts keeps the memo stable.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions, categories, groups, rules, state, reviewYear, currentMonth, todayISO]);
+  }, [transactions, categories, groups, rules, state, reviewYear, currentMonth, todayISO, hidden]);
 
   const stepper =
     state.mode === 'custom' ? (
