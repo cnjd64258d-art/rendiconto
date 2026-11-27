@@ -22,6 +22,7 @@ import { TabBar } from './TabBar';
 import { LockScreen } from './LockScreen';
 import { startLock, useLock } from './lock';
 import { UpdatePrompt } from './UpdatePrompt';
+import { useAmountsHidden } from '../ui/privacy';
 
 const DesignPage = lazy(() => import('../features/design/DesignPage'));
 // Analysis and "Tira una linea" load on first visit: a smaller initial bundle.
@@ -37,6 +38,8 @@ export function App() {
   const route = parseRoute(useHash());
   const budgetAlert = useBudgetAlert();
   const locked = useLock().status !== 'open';
+  // Re-render every screen when amounts are hidden or shown (formatting reads the setting).
+  useAmountsHidden();
 
   useEffect(() => {
     // No tap yet, so iOS won't show the keyboard: the sheet opens, one tap on the amount does the rest.

@@ -182,6 +182,17 @@ tests/fixtures synthetic CSVs only
   and the balance green/red (`--color-positive-soft` / `--color-negative-soft`).
 - Icon: `public/logo.svg` / `logo-dark.svg` (three entries, a ruled line, the total), white on a green gradient tile (owner asked for colours like a spreadsheet app; the shape stays our own). Apple/maskable background `#29B35A`. Settings sub-pages have empty states.
 
+## Implementation notes (after M9, owner requests)
+- Hide amounts (bank style): an eye button in every `Page` navbar (`ui/privacy.ts` store, localStorage
+  `ledgerline.hideAmounts`, read before first paint). `core/format.ts#setAmountsHidden` makes `formatCents`,
+  `formatCentsCompact` and `spokenCents` return `••••• €` / "importo nascosto"; `formatCentsPlain` (inputs) and CSV
+  exports are never masked. `App` subscribes so every screen re-renders; memoised parts that embed amounts
+  (`TransactionRow`, Analysis insights) subscribe too.
+- Today follows the salary (`core/month.ts#todayPeriod`): when a confirmed `cat_stipendio` income accrues to next
+  month, Today shows that month straight away ("Dallo stipendio del 27 nov"). Days left run from today to the end of
+  that month, the everyday pace counts from the salary date, and no further salary is expected as due income in it.
+  Only next month counts (a typo can't move the screen further). The Budget tab still pages calendar months.
+
 ## Data model (agreed plan, Dexie v1 from M2)
 transactions, categoryGroups, categories, paymentMethods, people, recurringRules,
 installmentPlans, settlements, budgets, savingsGoals, savedViews, importBatches, yearNotes, meta.

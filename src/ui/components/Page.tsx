@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode, type Ref } from 'react';
+import { toggleAmountsHidden, useAmountsHidden } from '../privacy';
 import styles from './Page.module.css';
 import { cx } from './cx';
+import { EyeIcon, EyeOffIcon } from './icons';
 
 interface PageProps {
   title: string;
@@ -52,7 +54,10 @@ export function Page({
         <div className={styles.navTitle} aria-hidden={titleMode === 'large'}>
           {title}
         </div>
-        <div className={styles.navTrailing}>{trailing}</div>
+        <div className={styles.navTrailing}>
+          <AmountsToggle />
+          {trailing}
+        </div>
       </header>
       {titleMode === 'large' ? (
         <div className={styles.largeTitle} ref={sentinel}>
@@ -65,6 +70,16 @@ export function Page({
       <div className={styles.body}>{children}</div>
       {footer !== undefined && <div className={styles.footer}>{footer}</div>}
     </div>
+  );
+}
+
+/** On every screen, next to the screen's own buttons: hide or show all amounts. */
+function AmountsToggle() {
+  const hidden = useAmountsHidden();
+  return (
+    <button type="button" className={styles.iconButton} onClick={toggleAmountsHidden} aria-pressed={hidden} aria-label={hidden ? 'Mostra importi' : 'Nascondi importi'}>
+      {hidden ? <EyeOffIcon /> : <EyeIcon />}
+    </button>
   );
 }
 

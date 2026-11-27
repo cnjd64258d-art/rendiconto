@@ -98,3 +98,24 @@ export function FaceIdIcon({ size = 22 }: { size?: number }) {
     </svg>
   );
 }
+
+/** Open eye: amounts are visible (tap to hide). */
+export function EyeIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+/** Crossed eye: amounts are hidden (tap to show). */
+export function EyeOffIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9.9 5.7A10.6 10.6 0 0112 5.5c6.4 0 10 6.5 10 6.5a17.6 17.6 0 01-2.9 3.7M6.6 6.9C3.7 8.7 2 12 2 12s3.6 6.5 10 6.5c1.6 0 3-.4 4.3-1" />
+      <path d="M9.9 9.9a3 3 0 004.2 4.2" />
+      <path d="M3 3l18 18" />
+    </svg>
+  );
+}

@@ -21,8 +21,24 @@ const decimalInput = new Intl.NumberFormat(LOCALE, {
   useGrouping: 'always',
 });
 
-/** 123456 → "1.234,56 €" */
+/* ---------- hidden amounts ("nascondi importi", bank style) ---------- */
+
+let amountsHidden = false;
+/** What a hidden amount looks like: no digits and no sign, so nothing leaks. */
+export const HIDDEN_AMOUNT = '•••••\u00a0€';
+
+/** Display setting, set by the app shell; exports and inputs never go through the masked formatters. */
+export function setAmountsHidden(hidden: boolean): void {
+  amountsHidden = hidden;
+}
+
+export function areAmountsHidden(): boolean {
+  return amountsHidden;
+}
+
+/** 123456 → "1.234,56 €" (or "••••• €" while amounts are hidden). */
 export function formatCents(cents: Cents, opts: { decimals?: boolean; signed?: boolean } = {}): string {
+  if (amountsHidden) return HIDDEN_AMOUNT;
   const fmt = opts.decimals === false ? currencyNoDecimals : currency;
   const text = fmt.format(Math.abs(cents) / 100);
   if (cents < 0) return `−${text}`;
@@ -38,6 +54,7 @@ export function formatCentsPlain(cents: Cents): string {
 
 /** Screen-reader friendly amount: "1234 euro e 56 centesimi". */
 export function spokenCents(cents: Cents): string {
+  if (amountsHidden) return 'importo nascosto';
   const abs = Math.abs(cents);
   const euros = Math.trunc(abs / 100);
   const c = abs % 100;
@@ -95,6 +112,7 @@ export function formatMonthShort(month: YearMonth, withYear = false): string {
 
 /** Compact amount for chart axes: 123456 → "1,2k €", 45000 → "450 €". */
 export function formatCentsCompact(cents: number): string {
+  if (amountsHidden) return '••\u00a0€';
   const euros = cents / 100;
   if (Math.abs(euros) >= 1000) return `${(euros / 1000).toLocaleString(LOCALE, { maximumFractionDigits: 1 })}k €`;
   return `${Math.round(euros).toLocaleString(LOCALE)} €`;

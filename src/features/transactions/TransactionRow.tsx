@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { useAmountsHidden } from '../../ui/privacy';
 import { openEditTransaction } from '../../app/editor';
 import { formatCents, formatDayShort, formatMonth, spokenCents } from '../../core/format';
 import { effectiveCents, type DayGroup } from '../../core/transactions';
@@ -19,6 +20,7 @@ export async function deleteWithUndo(t: Transaction) {
 }
 
 export const TransactionRow = memo(function TransactionRow({ t, lookups }: { t: Transaction; lookups: Lookups }) {
+  useAmountsHidden(); // memoised row: re-render when amounts are hidden or shown
   const category = t.categoryId ? lookups.categories.get(t.categoryId) : undefined;
   const method = lookups.methods.get(t.paymentMethodId);
   const toMethod = t.toPaymentMethodId ? lookups.methods.get(t.toPaymentMethodId) : undefined;

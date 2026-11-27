@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { monthOverview } from './month';
+import { monthOverview, todayPeriod } from './month';
 import { tx } from './test-utils';
 import type { Budget, RecurringRule } from './types';
 
@@ -102,5 +102,70 @@ describe('monthOverview', () => {
     expect(o.daysLeft).toBe(1);
     expect(o.perDayCents).toBe(150000);
     expect(o.projectedExpenseCents).toBe(0);
+  });
+});
+
+describe('todayPeriod (Today follows the salary)', () => {
+  const salary = (date: string, accrualMonth: string, over = {}) =>
+    tx({ date, accrualMonth, kind: 'income', amountCents: 200000, categoryId: 'cat_stipendio', ...over });
+
+  it('is the calendar month without a salary for next month', () => {
+    expect(todayPeriod([salary('2026-10-27', '2026-11')], '2026-11-20')).toEqual({ month: '2026-11', start: '2026-11-01', salaryDate: null });
+  });
+
+  it('moves to next month as soon as its salary is in', () => {
+    const p = todayPeriod([salary('2026-10-27', '2026-11'), salary('2026-11-27', '2026-12')], '2026-11-27');
+    expect(p).toEqual({ month: '2026-12', start: '2026-11-27', salaryDate: '2026-11-27' });
+  });
+
+  it('works across the new year', () => {
+    expect(todayPeriod([salary('2026-12-23', '2027-01')], '2026-12-28').month).toBe('2027-01');
+  });
+
+  it('ignores pending salaries, other income, and salaries accrued further ahead', () => {
+    const today = '2026-11-27';
+    expect(todayPeriod([salary('2026-11-27', '2026-12', { status: 'pending' })], today).month).toBe('2026-11');
+    expect(todayPeriod([salary('2026-11-27', '2026-12', { categoryId: 'cat_altre_entrate' })], today).month).toBe('2026-11');
+    expect(todayPeriod([salary('2026-11-27', '2027-01')], today).month).toBe('2026-11');
+  });
+
+  it('starts the pace today when the salary is dated in the future', () => {
+    expect(todayPeriod([salary('2026-11-30', '2026-12')], '2026-11-27').start).toBe('2026-11-27');
+  });
+});
+
+describe('monthOverview for next month (salary already in)', () => {
+  const kindOf = (id: string) => (id === 'cat_stipendio' ? ('income' as const) : ('expense' as const));
+  const today = '2026-11-27';
+  const period = { month: '2026-12', start: '2026-11-27' };
+  const transactions = [
+    tx({ date: '2026-11-27', accrualMonth: '2026-12', kind: 'income', amountCents: 200000, categoryId: 'cat_stipendio' }),
+    tx({ date: '2026-11-27', accrualMonth: '2026-12', amountCents: 2000 }),
+    tx({ date: '2026-11-20', amountCents: 9999 }), // November: not in December's view
+  ];
+  const rules = [
+    rule({ id: 'r_nov', dayOfMonth: 29, categoryId: 'cat_mutuo', amountCents: 1000 }), // 29 Nov (November) + 29 Dec
+  ];
+  const budgets = [budget({ targetId: 'cat_cibo', monthlyLimitCents: 70000 })];
+
+  it('shows December numbers with the days left until 31 December', () => {
+    const o = monthOverview({ transactions, rules, budgets, categories: cats, kindOf, today, period });
+    expect(o.month).toBe('2026-12');
+    expect(o.spentCents).toBe(2000);
+    expect(o.incomeCents).toBe(200000);
+    expect(o.daysLeft).toBe(35); // 27–30 Nov + 31 days of December
+    expect(o.dueExpenseCents).toBe(1000); // only the December occurrence
+    expect(o.perDayCents).toBe(Math.floor((70000 - 2000) / 35)); // the 20 € expense is in the budgeted cat_cibo
+    // everyday pace: 2000 over 1 elapsed day, for the 34 days after today
+    expect(o.projectedExpenseCents).toBe(2000 + 1000 + 2000 * 34);
+  });
+
+  it("doesn't expect another salary in a month its salary opened early", () => {
+    const salaryRule = rule({ id: 'r_stip', title: 'Stipendio', amountCents: 200000, dayOfMonth: 27, categoryId: 'cat_stipendio' });
+    const opened = monthOverview({ transactions, rules: [salaryRule], budgets, categories: cats, kindOf, today, period: { ...period, salaryDate: '2026-11-27' } });
+    expect(opened.dueIncomeCents).toBe(0);
+    expect(opened.projectedIncomeCents).toBe(200000);
+    const calendar = monthOverview({ transactions, rules: [salaryRule], budgets, categories: cats, kindOf, today, period });
+    expect(calendar.dueIncomeCents).toBe(200000);
   });
 });

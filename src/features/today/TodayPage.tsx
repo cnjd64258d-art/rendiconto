@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { openEditTransaction, openNewTransaction } from '../../app/editor';
 import { backupReminder } from '../../core/backup/backup';
 import { alertSummary, budgetMonth, spendIndex, type AlertSummary, type BudgetLine } from '../../core/budget';
-import { addDays, monthOf, today } from '../../core/dates';
+import { addDays, endOfMonthDate, today } from '../../core/dates';
 import { capitalize, formatCents, formatDayLong, formatDayShort, formatMonth, formatPercent, spokenCents } from '../../core/format';
-import { monthOverview } from '../../core/month';
+import { monthOverview, todayPeriod } from '../../core/month';
 import { kindResolver, upcoming } from '../../core/recurring';
 import { groupByDay } from '../../core/transactions';
 import { suggestedReviewYear } from '../../core/yearReview';
@@ -38,19 +38,21 @@ export function TodayPage() {
   const kindOf = useMemo(() => kindResolver(categories ?? [], groups ?? []), [categories, groups]);
 
   const index = useMemo(() => spendIndex(transactions ?? []), [transactions]);
+  // The month of the latest salary's competenza: paid on 27 November for December, Today shows December.
+  const period = useMemo(() => todayPeriod(transactions ?? [], todayISO), [transactions, todayISO]);
   const overview = useMemo(
     () =>
       transactions && rules && budgets && categories
-        ? monthOverview({ transactions, rules, budgets, categories, kindOf, today: todayISO, index })
+        ? monthOverview({ transactions, rules, budgets, categories, kindOf, today: todayISO, index, period })
         : null,
-    [transactions, rules, budgets, categories, kindOf, todayISO, index],
+    [transactions, rules, budgets, categories, kindOf, todayISO, index, period],
   );
   const alerts = useMemo(
     () =>
       transactions && budgets && categories
-        ? alertSummary(budgetMonth({ budgets, transactions, categories, groups: [], month: monthOf(todayISO), index }).lines)
+        ? alertSummary(budgetMonth({ budgets, transactions, categories, groups: [], month: period.month, index }).lines)
         : null,
-    [transactions, budgets, categories, todayISO, index],
+    [transactions, budgets, categories, period.month, index],
   );
 
   const pending = useMemo(
@@ -111,6 +113,9 @@ export function TodayPage() {
       {overview && !empty && (
         <section className={styles.hero} aria-label="Questo mese">
           <div className={styles.heroLabel}>Speso a {formatMonth(overview.month).split(' ')[0]}</div>
+          {period.salaryDate !== null && (
+            <div className={styles.heroSince}>Dallo stipendio del {formatDayShort(period.salaryDate).replace(/^\S+ /, '')}</div>
+          )}
           <AnimatedAmount cents={overview.spentCents} className={styles.heroAmount} />
           {overview.budget !== null ? (
             <>
@@ -126,7 +131,8 @@ export function TodayPage() {
                 ) : (
                   <>
                     Puoi spendere ancora <strong>{formatCents(overview.perDayCents ?? 0)}</strong> al giorno
-                    {overview.daysLeft === 1 ? ' (ultimo giorno del mese)' : ` per ${overview.daysLeft} giorni`}.
+                    {overview.daysLeft === 1 ? ' (ultimo giorno del mese)' : ` per ${overview.daysLeft} giorni`}
+                    {period.salaryDate !== null && `, fino al ${formatDayShort(endOfMonthDate(overview.month)).replace(/^\S+ /, '')}`}.
                   </>
                 )}
               </p>
